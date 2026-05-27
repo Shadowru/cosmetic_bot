@@ -1,0 +1,1207 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Конкурентный анализ — Профессиональная косметика B2C</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg:        #0e0e10;
+    --bg2:       #16161a;
+    --bg3:       #1e1e24;
+    --card:      #22222a;
+    --border:    #2e2e38;
+    --text:      #eceae4;
+    --muted:     #7a7a8a;
+    --gold:      #c9a96e;
+    --gold2:     #e8c98a;
+    --red:       #d4675a;
+    --orange:    #d4875a;
+    --green:     #6aaa7a;
+    --blue:      #6a8eaa;
+    --serif:     Georgia, 'Times New Roman', serif;
+    --sans:      'Helvetica Neue', Helvetica, Arial, sans-serif;
+  }
+
+  html, body { width: 100%; height: 100%; overflow: hidden; background: var(--bg); color: var(--text); font-family: var(--sans); }
+
+  /* ── DECK ── */
+  .deck { position: relative; width: 100vw; height: 100vh; }
+
+  .slide {
+    position: absolute; inset: 0;
+    display: flex; flex-direction: column;
+    padding: 52px 72px 64px;
+    opacity: 0; pointer-events: none;
+    transform: translateX(40px);
+    transition: opacity .45s cubic-bezier(.4,0,.2,1), transform .45s cubic-bezier(.4,0,.2,1);
+    overflow: hidden;
+  }
+  .slide.active { opacity: 1; pointer-events: all; transform: translateX(0); }
+  .slide.exit   { opacity: 0; transform: translateX(-40px); }
+
+  /* ── PROGRESS BAR ── */
+  #progress-bar {
+    position: fixed; bottom: 0; left: 0; height: 2px;
+    background: var(--gold); transition: width .4s ease;
+    z-index: 100;
+  }
+
+  /* ── NAV ── */
+  .nav {
+    position: fixed; bottom: 24px; right: 32px;
+    display: flex; align-items: center; gap: 16px; z-index: 100;
+  }
+  .nav-btn {
+    width: 40px; height: 40px; border-radius: 50%;
+    background: var(--bg3); border: 1px solid var(--border);
+    color: var(--muted); cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px; transition: all .2s;
+  }
+  .nav-btn:hover { background: var(--card); color: var(--gold); border-color: var(--gold); }
+  .nav-counter {
+    font-size: 12px; color: var(--muted); letter-spacing: .08em;
+    min-width: 48px; text-align: center;
+  }
+
+  /* ── SLIDE LABEL ── */
+  .slide-label {
+    font-size: 11px; letter-spacing: .15em; text-transform: uppercase;
+    color: var(--gold); margin-bottom: 24px; opacity: .8;
+  }
+
+  /* ── TITLES ── */
+  h1 { font-family: var(--serif); font-size: clamp(28px, 3.8vw, 52px); font-weight: 400; line-height: 1.15; color: var(--text); }
+  h2 { font-family: var(--serif); font-size: clamp(22px, 2.8vw, 38px); font-weight: 400; line-height: 1.2; color: var(--text); margin-bottom: 32px; }
+  h3 { font-size: 14px; letter-spacing: .08em; text-transform: uppercase; color: var(--gold); margin-bottom: 12px; }
+
+  p { font-size: 15px; line-height: 1.65; color: var(--muted); }
+  strong { color: var(--text); font-weight: 600; }
+
+  /* ── DECORATIVE LINE ── */
+  .rule { width: 48px; height: 1px; background: var(--gold); margin: 20px 0; opacity: .6; }
+
+  /* ──────────────────────────────────────────
+     SLIDE 1 — TITLE
+  ────────────────────────────────────────── */
+  .s1 { justify-content: center; }
+  .s1-eyebrow { font-size: 11px; letter-spacing: .2em; text-transform: uppercase; color: var(--gold); margin-bottom: 28px; }
+  .s1 h1 { font-size: clamp(32px, 4.5vw, 62px); max-width: 760px; }
+  .s1-sub { font-size: 16px; color: var(--muted); margin-top: 20px; max-width: 520px; line-height: 1.6; }
+  .s1-meta { margin-top: 40px; display: flex; gap: 32px; }
+  .s1-meta-item { display: flex; flex-direction: column; gap: 4px; }
+  .s1-meta-item .label { font-size: 10px; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); }
+  .s1-meta-item .val   { font-size: 14px; color: var(--text); }
+  .s1-deco {
+    position: absolute; right: 60px; top: 50%; transform: translateY(-50%);
+    width: 320px; height: 320px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 40% 40%, rgba(201,169,110,.08), transparent 70%);
+    border: 1px solid rgba(201,169,110,.1);
+  }
+  .s1-deco::before {
+    content: ''; position: absolute; inset: 24px; border-radius: 50%;
+    border: 1px solid rgba(201,169,110,.07);
+  }
+  .s1-deco::after {
+    content: ''; position: absolute; inset: 56px; border-radius: 50%;
+    border: 1px solid rgba(201,169,110,.05);
+  }
+
+  /* ──────────────────────────────────────────
+     STAT CARDS
+  ────────────────────────────────────────── */
+  .stat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-top: 8px; }
+  .stat-card {
+    background: var(--bg3); border: 1px solid var(--border);
+    border-radius: 12px; padding: 28px 24px;
+    display: flex; flex-direction: column; gap: 10px;
+    position: relative; overflow: hidden;
+  }
+  .stat-card::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+    background: var(--gold); opacity: .5;
+  }
+  .stat-num { font-family: var(--serif); font-size: clamp(26px, 3vw, 40px); color: var(--gold2); line-height: 1; }
+  .stat-label { font-size: 13px; color: var(--muted); line-height: 1.5; }
+  .stat-sub   { font-size: 11px; color: var(--muted); opacity: .6; }
+
+  /* ──────────────────────────────────────────
+     COMPETITOR FIELD MAP
+  ────────────────────────────────────────── */
+  .field-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; flex: 1; }
+  .field-card {
+    background: var(--bg3); border: 1px solid var(--border);
+    border-radius: 12px; padding: 24px 26px;
+  }
+  .field-card h3 { font-size: 10px; letter-spacing: .15em; }
+  .field-items { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+  .field-tag {
+    font-size: 12px; padding: 4px 10px; border-radius: 20px;
+    background: var(--card); border: 1px solid var(--border); color: var(--text);
+  }
+  .field-tag.strong { border-color: var(--gold); color: var(--gold2); }
+  .field-tag.muted  { color: var(--muted); }
+
+  /* ──────────────────────────────────────────
+     TOP-10 LIST
+  ────────────────────────────────────────── */
+  .comp-list { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; flex: 1; }
+  .comp-item {
+    background: var(--bg3); border: 1px solid var(--border);
+    border-radius: 10px; padding: 14px 18px;
+    display: flex; align-items: center; gap: 14px;
+  }
+  .comp-num { font-family: var(--serif); font-size: 20px; color: var(--gold); opacity: .5; min-width: 28px; }
+  .comp-info { flex: 1; }
+  .comp-name { font-size: 14px; color: var(--text); font-weight: 600; }
+  .comp-url  { font-size: 11px; color: var(--muted); margin-top: 2px; }
+  .comp-badge {
+    font-size: 10px; padding: 3px 8px; border-radius: 20px;
+    border: 1px solid var(--border); color: var(--muted);
+    white-space: nowrap;
+  }
+  .comp-badge.mfr { border-color: var(--gold); color: var(--gold2); }
+  .comp-badge.multi { border-color: var(--blue); color: var(--blue); }
+
+  /* ──────────────────────────────────────────
+     COMPARISON TABLE
+  ────────────────────────────────────────── */
+  .cmp-table { flex: 1; display: flex; flex-direction: column; gap: 0; border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
+  .cmp-row { display: grid; grid-template-columns: 160px repeat(5, 1fr); border-bottom: 1px solid var(--border); }
+  .cmp-row:last-child { border-bottom: none; }
+  .cmp-row.header { background: var(--bg3); }
+  .cmp-cell {
+    padding: 10px 14px; font-size: 12px; color: var(--muted);
+    border-right: 1px solid var(--border);
+    display: flex; align-items: center;
+  }
+  .cmp-cell:last-child { border-right: none; }
+  .cmp-cell.label { color: var(--text); font-size: 11px; font-weight: 600; background: var(--bg3); letter-spacing: .04em; }
+  .cmp-cell.head  { color: var(--gold2); font-size: 11px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; }
+  .cmp-cell.yes  { color: var(--green); }
+  .cmp-cell.no   { color: var(--red); opacity: .7; }
+  .cmp-cell.part { color: var(--orange); }
+
+  /* ──────────────────────────────────────────
+     LEADER CARDS
+  ────────────────────────────────────────── */
+  .leader-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; flex: 1; }
+  .leader-card {
+    background: var(--bg3); border: 1px solid var(--border);
+    border-radius: 12px; padding: 24px; display: flex; flex-direction: column; gap: 14px;
+  }
+  .leader-name { font-size: 15px; font-weight: 700; color: var(--gold2); }
+  .leader-type { font-size: 10px; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); margin-top: -8px; }
+  .leader-section { display: flex; flex-direction: column; gap: 8px; }
+  .leader-section-title { font-size: 10px; letter-spacing: .12em; text-transform: uppercase; color: var(--gold); }
+  .leader-feat { font-size: 12px; color: var(--muted); line-height: 1.5; padding-left: 12px; position: relative; }
+  .leader-feat::before { content: ''; position: absolute; left: 0; top: 8px; width: 4px; height: 4px; border-radius: 50%; background: var(--gold); opacity: .5; }
+  .vuln-card {
+    background: rgba(212,103,90,.06); border: 1px solid rgba(212,103,90,.2);
+    border-radius: 8px; padding: 12px 14px;
+    font-size: 12px; color: var(--muted); line-height: 1.5;
+  }
+  .vuln-label { font-size: 10px; letter-spacing: .1em; text-transform: uppercase; color: var(--red); margin-bottom: 6px; }
+
+  /* ──────────────────────────────────────────
+     STAMPS / PATTERNS
+  ────────────────────────────────────────── */
+  .stamps-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; flex: 1; align-content: start; }
+  .stamp-item {
+    background: var(--bg3); border: 1px solid var(--border);
+    border-radius: 10px; padding: 14px 16px;
+    display: flex; align-items: flex-start; gap: 12px;
+  }
+  .stamp-x { font-size: 16px; color: var(--red); opacity: .6; flex-shrink: 0; line-height: 1.4; }
+  .stamp-text { font-size: 13px; color: var(--text); font-weight: 600; }
+  .stamp-why  { font-size: 11px; color: var(--muted); margin-top: 3px; }
+
+  /* ──────────────────────────────────────────
+     VULNERABILITIES
+  ────────────────────────────────────────── */
+  .vuln-list { display: flex; flex-direction: column; gap: 14px; flex: 1; }
+  .vuln-row {
+    background: var(--bg3); border: 1px solid var(--border);
+    border-radius: 10px; padding: 18px 22px;
+    display: flex; align-items: flex-start; gap: 20px;
+  }
+  .vuln-num { font-family: var(--serif); font-size: 28px; color: var(--gold); opacity: .3; line-height: 1; min-width: 36px; }
+  .vuln-body { flex: 1; }
+  .vuln-title { font-size: 15px; color: var(--text); font-weight: 600; margin-bottom: 4px; }
+  .vuln-desc  { font-size: 13px; color: var(--muted); line-height: 1.6; }
+
+  /* ──────────────────────────────────────────
+     PRICING
+  ────────────────────────────────────────── */
+  .price-section { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; flex: 1; }
+  .price-segs { display: flex; flex-direction: column; gap: 10px; }
+  .price-seg {
+    background: var(--bg3); border: 1px solid var(--border);
+    border-radius: 10px; padding: 16px 18px;
+    display: flex; align-items: center; gap: 16px;
+  }
+  .price-seg-bar { width: 4px; border-radius: 4px; align-self: stretch; }
+  .seg-low  .price-seg-bar { background: var(--green); }
+  .seg-mid  .price-seg-bar { background: var(--gold); }
+  .seg-prem .price-seg-bar { background: var(--red); }
+  .price-seg-info { flex: 1; }
+  .price-seg-name  { font-size: 13px; color: var(--text); font-weight: 600; }
+  .price-seg-range { font-size: 11px; color: var(--muted); margin-top: 2px; }
+  .price-seg-ex    { font-size: 11px; color: var(--muted); opacity: .7; margin-top: 4px; }
+
+  .price-gaps { display: flex; flex-direction: column; gap: 10px; }
+  .gap-card {
+    background: rgba(201,169,110,.06); border: 1px solid rgba(201,169,110,.2);
+    border-radius: 10px; padding: 18px 20px; flex: 1;
+  }
+  .gap-title { font-size: 13px; color: var(--gold2); font-weight: 700; margin-bottom: 6px; }
+  .gap-desc  { font-size: 12px; color: var(--muted); line-height: 1.6; }
+
+  /* ──────────────────────────────────────────
+     STRATEGIES
+  ────────────────────────────────────────── */
+  .strat-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; flex: 1; }
+  .strat-card {
+    background: var(--bg3); border: 1px solid var(--border);
+    border-radius: 10px; padding: 16px 14px;
+    display: flex; flex-direction: column; gap: 8px;
+  }
+  .strat-num  { font-family: var(--serif); font-size: 22px; color: var(--gold); opacity: .4; }
+  .strat-name { font-size: 13px; color: var(--text); font-weight: 700; line-height: 1.35; }
+  .strat-desc { font-size: 11px; color: var(--muted); line-height: 1.5; flex: 1; }
+  .strat-badge {
+    font-size: 10px; padding: 3px 8px; border-radius: 20px;
+    align-self: flex-start; margin-top: auto;
+  }
+  .diff-low  { background: rgba(106,170,122,.1); border: 1px solid rgba(106,170,122,.3); color: var(--green); }
+  .diff-mid  { background: rgba(201,169,110,.1); border: 1px solid rgba(201,169,110,.3); color: var(--gold2); }
+  .diff-high { background: rgba(212,103,90,.1);  border: 1px solid rgba(212,103,90,.3);  color: var(--red); }
+
+  /* ──────────────────────────────────────────
+     RECOMMENDATIONS
+  ────────────────────────────────────────── */
+  .reco-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; flex: 1; }
+  .reco-card {
+    background: var(--bg3); border: 1px solid var(--border);
+    border-radius: 12px; padding: 20px 16px;
+    display: flex; flex-direction: column; gap: 10px;
+  }
+  .reco-icon { font-size: 22px; }
+  .reco-name { font-size: 13px; color: var(--gold2); font-weight: 700; }
+  .reco-items { display: flex; flex-direction: column; gap: 6px; margin-top: 4px; }
+  .reco-item { font-size: 11px; color: var(--muted); line-height: 1.45; padding-left: 10px; position: relative; }
+  .reco-item::before { content: ''; position: absolute; left: 0; top: 7px; width: 3px; height: 3px; border-radius: 50%; background: var(--gold); opacity: .5; }
+
+  /* ──────────────────────────────────────────
+     PRIORITIES TABLE
+  ────────────────────────────────────────── */
+  .prio-table { flex: 1; display: flex; flex-direction: column; gap: 0; border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
+  .prio-row { display: grid; grid-template-columns: 28px 2fr 90px 90px 70px; gap: 0; border-bottom: 1px solid var(--border); }
+  .prio-row:last-child { border-bottom: none; }
+  .prio-cell {
+    padding: 9px 12px; font-size: 12px; color: var(--muted);
+    border-right: 1px solid var(--border); display: flex; align-items: center;
+  }
+  .prio-cell:last-child { border-right: none; justify-content: center; }
+  .prio-cell.head { background: var(--bg3); color: var(--text); font-size: 10px; letter-spacing: .1em; text-transform: uppercase; font-weight: 700; }
+  .prio-cell.num  { color: var(--gold); font-family: var(--serif); font-size: 14px; justify-content: center; background: var(--bg3); }
+  .prio-cell.hypothesis { color: var(--text); font-size: 12px; }
+  .badge-high   { font-size: 10px; padding: 3px 8px; border-radius: 20px; background: rgba(106,170,122,.12); border: 1px solid rgba(106,170,122,.3); color: var(--green); }
+  .badge-medium { font-size: 10px; padding: 3px 8px; border-radius: 20px; background: rgba(201,169,110,.12); border: 1px solid rgba(201,169,110,.3); color: var(--gold2); }
+  .badge-low2   { font-size: 10px; padding: 3px 8px; border-radius: 20px; background: rgba(106,142,170,.12); border: 1px solid rgba(106,142,170,.3); color: var(--blue); }
+  .eff-badge { font-size: 11px; color: var(--muted); }
+
+  /* ──────────────────────────────────────────
+     30 DAYS PLAN
+  ────────────────────────────────────────── */
+  .plan-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; flex: 1; }
+  .week-card {
+    background: var(--bg3); border: 1px solid var(--border);
+    border-radius: 12px; padding: 20px 18px;
+    display: flex; flex-direction: column; gap: 12px;
+  }
+  .week-header { display: flex; align-items: center; gap: 10px; }
+  .week-num { font-family: var(--serif); font-size: 32px; color: var(--gold); opacity: .25; line-height: 1; }
+  .week-title { font-size: 13px; color: var(--gold2); font-weight: 700; line-height: 1.3; }
+  .week-items { display: flex; flex-direction: column; gap: 8px; }
+  .week-item {
+    font-size: 12px; color: var(--muted); line-height: 1.5;
+    padding-left: 14px; position: relative;
+  }
+  .week-item::before {
+    content: ''; position: absolute; left: 0; top: 7px;
+    width: 5px; height: 5px; border-radius: 50%;
+    border: 1px solid var(--gold); opacity: .5;
+  }
+
+  /* ──────────────────────────────────────────
+     FINAL SLIDE
+  ────────────────────────────────────────── */
+  .s-final { justify-content: center; align-items: flex-start; }
+  .final-main {
+    font-family: var(--serif);
+    font-size: clamp(24px, 3vw, 44px);
+    line-height: 1.25; max-width: 780px;
+    color: var(--text); margin-bottom: 36px;
+  }
+  .final-main em { color: var(--gold2); font-style: italic; }
+  .final-cards { display: flex; gap: 14px; flex-wrap: wrap; }
+  .final-card {
+    background: var(--bg3); border: 1px solid var(--border);
+    border-radius: 10px; padding: 16px 20px;
+    font-size: 13px; color: var(--muted); max-width: 220px; line-height: 1.6;
+  }
+  .final-card strong { color: var(--gold2); display: block; margin-bottom: 4px; font-size: 12px; letter-spacing: .06em; text-transform: uppercase; }
+
+  /* ──────────────────────────────────────────
+     BACKGROUND TEXTURE
+  ────────────────────────────────────────── */
+  .slide::after {
+    content: ''; position: absolute; inset: 0; pointer-events: none;
+    background: radial-gradient(ellipse at 80% 100%, rgba(201,169,110,.03), transparent 55%),
+                radial-gradient(ellipse at 20% 0%,   rgba(201,169,110,.025), transparent 45%);
+  }
+
+  /* ──────────────────────────────────────────
+     SMALL UTILITIES
+  ────────────────────────────────────────── */
+  .flex1 { flex: 1; display: flex; flex-direction: column; }
+  .mb8  { margin-bottom: 8px; }
+  .mb16 { margin-bottom: 16px; }
+  .mb24 { margin-bottom: 24px; }
+  .text-gold { color: var(--gold2); }
+  .text-red  { color: var(--red); }
+  .text-green { color: var(--green); }
+</style>
+</head>
+<body>
+
+<div id="progress-bar"></div>
+
+<div class="deck" id="deck">
+
+  <!-- ═══ SLIDE 1 — TITLE ═══ -->
+  <div class="slide s1 active">
+    <p class="s1-eyebrow">Исследование рынка · Май 2026</p>
+    <h1>Конкурентный анализ<br>профессиональной<br>косметики в B2C</h1>
+    <div class="rule"></div>
+    <p class="s1-sub">Кто конкурирует за покупателя, как упакован рынок, где слабые места и как выгодно отстроиться</p>
+    <div class="s1-meta">
+      <div class="s1-meta-item">
+        <span class="label">Охват</span>
+        <span class="val">10 прямых конкурентов</span>
+      </div>
+      <div class="s1-meta-item">
+        <span class="label">Сегмент</span>
+        <span class="val">Проф. косметика для людей</span>
+      </div>
+      <div class="s1-meta-item">
+        <span class="label">Данные</span>
+        <span class="val">2024 – 2026</span>
+      </div>
+    </div>
+    <div class="s1-deco"></div>
+  </div>
+
+  <!-- ═══ SLIDE 2 — THREE SOURCES ═══ -->
+  <div class="slide">
+    <p class="slide-label">Методология</p>
+    <h2>Три независимых исследования — один диагноз</h2>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:20px;">
+      <div class="leader-card" style="border-color:rgba(201,169,110,.3);">
+        <div class="leader-name">Claude Sonnet</div>
+        <div class="leader-type">Прямой анализ сайтов</div>
+        <div class="leader-section" style="margin-top:8px;">
+          <div class="leader-section-title">Метод</div>
+          <div class="leader-feat">Fetch главных страниц 12 конкурентов</div>
+          <div class="leader-feat">Рыночные данные IMARC, РБК, Sostav</div>
+          <div class="leader-section-title" style="margin-top:10px;">Уникальный вклад</div>
+          <div class="leader-feat">Прямые данные с сайтов</div>
+          <div class="leader-feat">AI-диагностика как тренд (ARAVIA, Geltek)</div>
+          <div class="leader-feat">Рассрочка как незанятая ниша</div>
+        </div>
+      </div>
+      <div class="leader-card" style="border-color:rgba(106,142,170,.3);">
+        <div class="leader-name">Gemini</div>
+        <div class="leader-type">Поиск + анализ позиционирования</div>
+        <div class="leader-section" style="margin-top:8px;">
+          <div class="leader-section-title">Метод</div>
+          <div class="leader-feat">Анализ поисковой выдачи и сниппетов</div>
+          <div class="leader-feat">Углублённый разбор маркетинга игроков</div>
+          <div class="leader-section-title" style="margin-top:10px;">Уникальный вклад</div>
+          <div class="leader-feat">Milfey Shop — эталон премиума</div>
+          <div class="leader-feat">РРЦ-ограничение на демпинг</div>
+          <div class="leader-feat">GWP-модель, WhatsApp-сопровождение</div>
+          <div class="leader-feat">Мужская ниша — пустая</div>
+        </div>
+      </div>
+      <div class="leader-card" style="border-color:rgba(106,170,122,.3);">
+        <div class="leader-name">GPT-4o</div>
+        <div class="leader-type">Поиск + структурный анализ</div>
+        <div class="leader-section" style="margin-top:8px;">
+          <div class="leader-section-title">Метод</div>
+          <div class="leader-feat">Поисковая выдача, данные из сниппетов</div>
+          <div class="leader-feat">Финансовые данные маркетплейсов</div>
+          <div class="leader-section-title" style="margin-top:10px;">Уникальный вклад</div>
+          <div class="leader-feat">Spadream, КрасоткаПро, Hairs Russia</div>
+          <div class="leader-feat">Блок совместимости составов на карточке</div>
+          <div class="leader-feat">Формула SEO-страницы по проблеме</div>
+          <div class="leader-feat">WB — 166,8 млрд, Ozon — 80,4 млрд руб</div>
+        </div>
+      </div>
+    </div>
+    <div style="background:rgba(201,169,110,.07);border:1px solid rgba(201,169,110,.25);border-radius:12px;padding:20px 24px;">
+      <p style="font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);margin-bottom:12px;">Консенсус всех трёх — в чём сошлись независимо</p>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;">
+        <div style="font-size:13px;color:var(--text);">✓ Все продают продукт — никто не продаёт результат</div>
+        <div style="font-size:13px;color:var(--text);">✓ Квиз подбора ухода = приоритет №1</div>
+        <div style="font-size:13px;color:var(--text);">✓ Готовые схемы важнее ассортимента</div>
+        <div style="font-size:13px;color:var(--text);">✓ SEO бить в проблемы, не в категории</div>
+        <div style="font-size:13px;color:var(--text);">✓ Страх «навредить» — главный барьер</div>
+        <div style="font-size:13px;color:var(--text);">✓ Маркетплейсы давят ценой, но слепые</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ SLIDE 3 — MARKET NUMBERS ═══ -->
+  <div class="slide">
+    <p class="slide-label">Контекст рынка</p>
+    <h2>Рынок в цифрах</h2>
+    <div class="stat-grid">
+      <div class="stat-card">
+        <div class="stat-num">1,11 трлн</div>
+        <div class="stat-label">Объём рынка косметики РФ в 2024 году (рублей)</div>
+        <div class="stat-sub">Источник: Sostav.ru, РБК Маркетинг</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num">+16,8%</div>
+        <div class="stat-label">Рост год к году — один из самых быстрых в потребительском секторе</div>
+        <div class="stat-sub">По итогам 2024 г.</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num">31%</div>
+        <div class="stat-label">Доля онлайн-продаж (было 20,7%). Маркетплейсы захватили 77% заказов</div>
+        <div class="stat-sub">WB + Ozon + Яндекс.Маркет</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num">2 000+</div>
+        <div class="stat-label">Отечественных производителей косметики, рост +30% за год</div>
+        <div class="stat-sub">Конкуренция усиливается</div>
+      </div>
+    </div>
+    <div style="margin-top:24px; background:var(--bg3); border:1px solid var(--border); border-radius:10px; padding:18px 22px;">
+      <p style="font-size:14px; color:var(--text); line-height:1.7;">
+        <strong>Главный вывод:</strong> рынок растёт стремительно, онлайн-канал доминирует, но профессиональная косметика в B2C остаётся <strong style="color:var(--gold2)">наименее структурированным сегментом</strong> — без чётких игроков-лидеров по доверию.
+      </p>
+    </div>
+  </div>
+
+  <!-- ═══ SLIDE 3 — FIELD MAP ═══ -->
+  <div class="slide">
+    <p class="slide-label">Конкурентное поле</p>
+    <h2>Карта рынка</h2>
+    <div class="field-grid">
+      <div class="field-card">
+        <h3 style="color:var(--gold)">Прямые конкуренты</h3>
+        <p style="font-size:11px;margin-bottom:10px;">Продают проф. косметику B2C онлайн</p>
+        <div class="field-items">
+          <span class="field-tag strong">proficosmetics.ru</span>
+          <span class="field-tag strong">aravia.ru</span>
+          <span class="field-tag strong">geltek.ru</span>
+          <span class="field-tag">pro-cosmetik.ru</span>
+          <span class="field-tag">pleyana.com</span>
+          <span class="field-tag">lamar.ru</span>
+          <span class="field-tag">milenaclub.ru</span>
+          <span class="field-tag">profcosmetology.ru</span>
+          <span class="field-tag muted">+ 7 других</span>
+        </div>
+      </div>
+      <div class="field-card">
+        <h3 style="color:var(--blue)">Косвенные конкуренты</h3>
+        <p style="font-size:11px;margin-bottom:10px;">Борются за тот же тип покупателя</p>
+        <div class="field-items">
+          <span class="field-tag" style="border-color:var(--blue);color:var(--blue)">La Roche-Posay</span>
+          <span class="field-tag" style="border-color:var(--blue);color:var(--blue)">Vichy</span>
+          <span class="field-tag">Korean beauty</span>
+          <span class="field-tag muted">Косметологи-блогеры</span>
+          <span class="field-tag muted">MLM-сети</span>
+        </div>
+      </div>
+      <div class="field-card">
+        <h3 style="color:var(--red)">Агрегаторы-угрозы</h3>
+        <p style="font-size:11px;margin-bottom:10px;">Давят ценой и трафиком, нет экспертизы</p>
+        <div class="field-items">
+          <span class="field-tag" style="border-color:var(--red);color:var(--red)">Wildberries</span>
+          <span class="field-tag" style="border-color:var(--red);color:var(--red)">Ozon</span>
+          <span class="field-tag" style="border-color:var(--red);color:var(--red)">Яндекс.Маркет</span>
+        </div>
+        <p style="font-size:11px;color:var(--muted);margin-top:10px;">Проф. косметика на WB дешевле рынка на <strong>10–25%</strong></p>
+      </div>
+      <div class="field-card">
+        <h3 style="color:var(--gold)">ТОП-5 по маркетингу</h3>
+        <p style="font-size:11px;margin-bottom:10px;">Сильнейшие игроки по упаковке</p>
+        <div class="field-items">
+          <span class="field-tag strong">ARAVIA — AI-тест, академия</span>
+          <span class="field-tag strong">Galereya — SEO-машина</span>
+          <span class="field-tag strong">Geltek — AI + 4.9★</span>
+          <span class="field-tag">Pro-Cosmetik — 15 лет</span>
+          <span class="field-tag">Pharmacosmetica — боксы</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ SLIDE 4 — TOP COMPETITORS ═══ -->
+  <div class="slide">
+    <p class="slide-label">Конкуренты</p>
+    <h2>Расширенная карта конкурентов <span style="font-size:16px;color:var(--muted);font-family:var(--sans);font-weight:400;">— после синтеза трёх исследований</span></h2>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;flex:1;">
+      <div>
+        <p style="font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);margin-bottom:10px;">Прямые конкуренты (специализированные ИМ)</p>
+        <div style="display:flex;flex-direction:column;gap:7px;">
+          <div class="comp-item"><div class="comp-num">1</div><div class="comp-info"><div class="comp-name">Галерея Косметики</div><div class="comp-url">proficosmetics.ru</div></div><span class="comp-badge multi">Мультибренд</span></div>
+          <div class="comp-item"><div class="comp-num">2</div><div class="comp-info"><div class="comp-name">ARAVIA Professional</div><div class="comp-url">aravia.ru</div></div><span class="comp-badge mfr">Производитель</span></div>
+          <div class="comp-item"><div class="comp-num">3</div><div class="comp-info"><div class="comp-name">Milfey Shop ★ new</div><div class="comp-url">milfeishop.ru — премиум от клиники</div></div><span class="comp-badge" style="border-color:var(--gold);color:var(--gold);">Клиника-бутик</span></div>
+          <div class="comp-item"><div class="comp-num">4</div><div class="comp-info"><div class="comp-name">Spadream ★ new</div><div class="comp-url">spadream.ru — Davines, Comfort Zone, Allies of Skin</div></div><span class="comp-badge" style="border-color:var(--gold);color:var(--gold);">Премиум мультибренд</span></div>
+          <div class="comp-item"><div class="comp-num">5</div><div class="comp-info"><div class="comp-name">Profcosmetology</div><div class="comp-url">profcosmetology.ru</div></div><span class="comp-badge">Клиника + магазин</span></div>
+          <div class="comp-item"><div class="comp-num">6</div><div class="comp-info"><div class="comp-name">Pharmacosmetica</div><div class="comp-url">pharmacosmetica.ru</div></div><span class="comp-badge">Аптечно-проф</span></div>
+          <div class="comp-item"><div class="comp-num">7</div><div class="comp-info"><div class="comp-name">Geltek</div><div class="comp-url">geltek.ru</div></div><span class="comp-badge mfr">Производитель + AI</span></div>
+          <div class="comp-item"><div class="comp-num">8</div><div class="comp-info"><div class="comp-name">Lamar Professional</div><div class="comp-url">lamar.ru</div></div><span class="comp-badge mfr">Произв. + академия</span></div>
+        </div>
+      </div>
+      <div>
+        <p style="font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);margin-bottom:10px;">Специализированные ниши и косвенные</p>
+        <div style="display:flex;flex-direction:column;gap:7px;">
+          <div class="comp-item"><div class="comp-num">9</div><div class="comp-info"><div class="comp-name">КрасоткаПро ★ new</div><div class="comp-url">krasotkapro.ru — 95 000 SKU, 900 брендов</div></div><span class="comp-badge" style="border-color:var(--gold);color:var(--gold);">Nails + Hair</span></div>
+          <div class="comp-item"><div class="comp-num">10</div><div class="comp-info"><div class="comp-name">Hairs Russia ★ new</div><div class="comp-url">hairs-russia.ru — Goldwell, Lebel, Davines</div></div><span class="comp-badge">Hair-экспертиза</span></div>
+          <div class="comp-item"><div class="comp-num">11</div><div class="comp-info"><div class="comp-name">Cosmetika.ru / PREMIUM</div><div class="comp-url">cosmetika.ru — «можно и нужно дома»</div></div><span class="comp-badge mfr">Офиц. бренд</span></div>
+          <div class="comp-item"><div class="comp-num" style="font-size:14px;">↯</div><div class="comp-info"><div class="comp-name">Wildberries — 166,8 млрд руб</div><div class="comp-url">Косметика/дрогери 2024</div></div><span class="comp-badge" style="border-color:var(--red);color:var(--red);">Маркетплейс</span></div>
+          <div class="comp-item"><div class="comp-num" style="font-size:14px;">↯</div><div class="comp-info"><div class="comp-name">Ozon — 80,4 млрд руб</div><div class="comp-url">Косметика/дрогери 2024</div></div><span class="comp-badge" style="border-color:var(--red);color:var(--red);">Маркетплейс</span></div>
+          <div class="comp-item"><div class="comp-num" style="font-size:14px;">⊙</div><div class="comp-info"><div class="comp-name">Золотое Яблоко — UX-бенчмарк</div><div class="comp-url">Доставка 2 часа, приложение-соцсеть. Нет экспертизы по проф.</div></div><span class="comp-badge">Beauty-ритейл</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ SLIDE 5 — COMPARISON ═══ -->
+  <div class="slide">
+    <p class="slide-label">Сравнительный анализ</p>
+    <h2>Оффер и позиционирование</h2>
+    <div class="cmp-table">
+      <div class="cmp-row header">
+        <div class="cmp-cell head">Параметр</div>
+        <div class="cmp-cell head">Galereya</div>
+        <div class="cmp-cell head">ARAVIA</div>
+        <div class="cmp-cell head">Geltek</div>
+        <div class="cmp-cell head">Pro-Cosmetik</div>
+        <div class="cmp-cell head">Profcosmetology</div>
+      </div>
+      <div class="cmp-row">
+        <div class="cmp-cell label">Главный оффер</div>
+        <div class="cmp-cell">35 000 SKU</div>
+        <div class="cmp-cell">Салонный уход дома</div>
+        <div class="cmp-cell">AI + гели</div>
+        <div class="cmp-cell">200+ брендов, оригинал</div>
+        <div class="cmp-cell">Клиника + магазин</div>
+      </div>
+      <div class="cmp-row">
+        <div class="cmp-cell label">Есть ли цены</div>
+        <div class="cmp-cell yes">✓ Да</div>
+        <div class="cmp-cell yes">✓ Да</div>
+        <div class="cmp-cell yes">✓ Да</div>
+        <div class="cmp-cell part">~ Частично</div>
+        <div class="cmp-cell yes">✓ Да</div>
+      </div>
+      <div class="cmp-row">
+        <div class="cmp-cell label">Лид-магнит</div>
+        <div class="cmp-cell">Бьюти-баллы</div>
+        <div class="cmp-cell" style="color:var(--green)">AI-тест кожи ★</div>
+        <div class="cmp-cell" style="color:var(--green)">Telegram-бот ★</div>
+        <div class="cmp-cell">Колесо фортуны</div>
+        <div class="cmp-cell">Запись к врачу</div>
+      </div>
+      <div class="cmp-row">
+        <div class="cmp-cell label">Гарантия результата</div>
+        <div class="cmp-cell no">✗ Нет</div>
+        <div class="cmp-cell no">✗ Нет</div>
+        <div class="cmp-cell no">✗ Нет</div>
+        <div class="cmp-cell no">✗ Нет</div>
+        <div class="cmp-cell no">✗ Нет</div>
+      </div>
+      <div class="cmp-row">
+        <div class="cmp-cell label">Обучение применению</div>
+        <div class="cmp-cell no">✗ Нет</div>
+        <div class="cmp-cell part">~ Базово</div>
+        <div class="cmp-cell no">✗ Нет</div>
+        <div class="cmp-cell no">✗ Нет</div>
+        <div class="cmp-cell part">~ Через клинику</div>
+      </div>
+      <div class="cmp-row">
+        <div class="cmp-cell label">Рассрочка/BNPL</div>
+        <div class="cmp-cell no">✗ Нет</div>
+        <div class="cmp-cell no">✗ Нет</div>
+        <div class="cmp-cell no">✗ Нет</div>
+        <div class="cmp-cell no">✗ Нет</div>
+        <div class="cmp-cell no">✗ Нет</div>
+      </div>
+      <div class="cmp-row">
+        <div class="cmp-cell label">Подписка на уход</div>
+        <div class="cmp-cell no">✗ Нет</div>
+        <div class="cmp-cell no">✗ Нет</div>
+        <div class="cmp-cell no">✗ Нет</div>
+        <div class="cmp-cell no">✗ Нет</div>
+        <div class="cmp-cell no">✗ Нет</div>
+      </div>
+    </div>
+    <p style="margin-top:14px;font-size:12px;color:var(--muted);">Красным выделены незанятые ниши — ни один конкурент не закрывает гарантию результата, рассрочку и подписку</p>
+  </div>
+
+  <!-- ═══ SLIDE 6 — LEADERS ═══ -->
+  <div class="slide">
+    <p class="slide-label">Разбор сильнейших</p>
+    <h2>Что делают лидеры — и где их уязвимость</h2>
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px;flex:1;">
+      <div class="leader-card">
+        <div>
+          <div class="leader-name">ARAVIA Professional</div>
+          <div class="leader-type">Сильнейший маркетинг на рынке</div>
+        </div>
+        <div class="leader-section">
+          <div class="leader-section-title">Фишки</div>
+          <div class="leader-feat">AI-тест кожи → рекомендация продукта</div>
+          <div class="leader-feat">Именованный эксперт (Стелла Никитина)</div>
+          <div class="leader-feat">28 городов + учебный центр</div>
+          <div class="leader-feat">Цены 298–961 ₽ со скидками 25–30%</div>
+        </div>
+        <div>
+          <div class="vuln-label">Уязвимость</div>
+          <div class="vuln-card">AI-тест ведёт к продукту, но не объясняет КАК применять. Нет кейсов домашнего применения с измеримым результатом. Нет гарантии результата.</div>
+        </div>
+      </div>
+      <div class="leader-card">
+        <div>
+          <div class="leader-name">Galereya Kosmetiki</div>
+          <div class="leader-type">Лидер по охвату и SEO</div>
+        </div>
+        <div class="leader-section">
+          <div class="leader-section-title">Фишки</div>
+          <div class="leader-feat">35 000 SKU — крупнейший каталог</div>
+          <div class="leader-feat">SEO-машина: категории × бренды × статьи</div>
+          <div class="leader-feat">Международные бренды 7 стран</div>
+          <div class="leader-feat">Мобильное приложение + блог</div>
+        </div>
+        <div>
+          <div class="vuln-label">Уязвимость</div>
+          <div class="vuln-card">Нет персонализации. Покупатель теряется в 35 000 товарах. Нет ответа «что выбрать при моей проблеме». Конкурирует с WB там, где WB сильнее.</div>
+        </div>
+      </div>
+      <div class="leader-card">
+        <div>
+          <div class="leader-name">Geltek</div>
+
+          <div class="leader-type">Технологический лидер</div>
+        </div>
+        <div class="leader-section">
+          <div class="leader-section-title">Фишки</div>
+          <div class="leader-feat">AI-диагностика + Telegram-бот</div>
+          <div class="leader-feat">2 900+ отзывов на единицу, рейтинг 4.9★</div>
+          <div class="leader-feat">Медицинские сертификаты</div>
+          <div class="leader-feat">Подбор альтернатив через AI</div>
+        </div>
+        <div>
+          <div class="vuln-label">Уязвимость</div>
+          <div class="vuln-card">Узкая специализация только на гелевых текстурах. Не масштабируется на другие форматы. Узкое ядро ЦА — не для всех задач.</div>
+        </div>
+      </div>
+      <!-- 4th leader: Milfey Shop (from Gemini) -->
+      <div class="leader-card" style="border-color:rgba(201,169,110,.35);">
+        <div>
+          <div class="leader-name" style="color:var(--gold);">Milfey Shop ★</div>
+          <div class="leader-type">Эталон премиум-маркетинга (Gemini)</div>
+        </div>
+        <div class="leader-section">
+          <div class="leader-section-title">Фишки</div>
+          <div class="leader-feat">Позиционирование: продолжение премиальной клиники</div>
+          <div class="leader-feat">CTA: «Подобрать уход» (не «Купить»)</div>
+          <div class="leader-feat">Посыл: «Инвестиции в кожу», «Уход, назначенный врачом»</div>
+          <div class="leader-feat">Лица врачей — главный триггер доверия</div>
+          <div class="leader-feat">Бренды: Ultraceuticals, Zein Obagi</div>
+        </div>
+        <div>
+          <div class="vuln-label">Уязвимость</div>
+          <div class="vuln-card">Высокий порог входа — отпугивает средний класс. Игнорируют сегмент «до 5 000 ₽». Сухой «медицинский» тон, мало эмоций.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ SLIDE 7 — STAMPS ═══ -->
+  <div class="slide">
+    <p class="slide-label">Паттерны рынка</p>
+    <h2>Что «замылилось» — нельзя использовать как УТП</h2>
+    <div class="stamps-grid">
+      <div class="stamp-item">
+        <div class="stamp-x">✕</div>
+        <div><div class="stamp-text">«Профессиональная косметика для домашнего ухода»</div><div class="stamp-why">Используют все — давно не дифференцирует</div></div>
+      </div>
+      <div class="stamp-item">
+        <div class="stamp-x">✕</div>
+        <div><div class="stamp-text">«Салонный уход в домашних условиях»</div><div class="stamp-why">Избит, не конкретен, не вызывает доверия</div></div>
+      </div>
+      <div class="stamp-item">
+        <div class="stamp-x">✕</div>
+        <div><div class="stamp-text">«100% оригинальная продукция»</div><div class="stamp-why">Стало базовым ожиданием покупателя — не УТП</div></div>
+      </div>
+      <div class="stamp-item">
+        <div class="stamp-x">✕</div>
+        <div><div class="stamp-text">«Широкий ассортимент / 35 000 товаров»</div><div class="stamp-why">Против маркетплейсов — проигрышная стратегия</div></div>
+      </div>
+      <div class="stamp-item">
+        <div class="stamp-x">✕</div>
+        <div><div class="stamp-text">«Бесплатная доставка от N рублей»</div><div class="stamp-why">Стандарт рынка, ни у кого нет преимущества</div></div>
+      </div>
+      <div class="stamp-item">
+        <div class="stamp-x">✕</div>
+        <div><div class="stamp-text">«Программа лояльности / бонусные баллы»</div><div class="stamp-why">Есть у каждого второго — не удерживает</div></div>
+      </div>
+      <div class="stamp-item">
+        <div class="stamp-x">✕</div>
+        <div><div class="stamp-text">«Сертифицированная продукция»</div><div class="stamp-why">Покупатель ждёт по умолчанию — говорить смысла нет</div></div>
+      </div>
+      <div class="stamp-item">
+        <div class="stamp-x">✕</div>
+        <div><div class="stamp-text">«X лет на рынке / официальный дистрибьютор»</div><div class="stamp-why">Без конкретной истории — пустой звук</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ SLIDE 8 — VULNERABILITIES ═══ -->
+  <div class="slide">
+    <p class="slide-label">Возможности</p>
+    <h2>5 вещей, которых нет ни у одного конкурента</h2>
+    <div class="vuln-list">
+      <div class="vuln-row">
+        <div class="vuln-num">1</div>
+        <div class="vuln-body">
+          <div class="vuln-title">Обучение применению — системное, курсовое</div>
+          <div class="vuln-desc">Никто не объясняет как применять профессиональную косметику дома: в какой последовательности, с какой частотой, курсом. Это главный страх покупателя.</div>
+        </div>
+      </div>
+      <div class="vuln-row">
+        <div class="vuln-num">2</div>
+        <div class="vuln-body">
+          <div class="vuln-title">Гарантия результата (не оригинальности товара)</div>
+          <div class="vuln-desc">Все гарантируют «100% оригинал». Никто не гарантирует «видимый результат за 28 дней». Это самый мощный незанятый триггер доверия.</div>
+        </div>
+      </div>
+      <div class="vuln-row">
+        <div class="vuln-num">3</div>
+        <div class="vuln-body">
+          <div class="vuln-title">Кейсы «до/после» от домашнего применения</div>
+          <div class="vuln-desc">Profcosmetology показывает до/после, но только от клиники. Нет ни одного игрока с системными кейсами домашнего самостоятельного применения.</div>
+        </div>
+      </div>
+      <div class="vuln-row">
+        <div class="vuln-num">4</div>
+        <div class="vuln-body">
+          <div class="vuln-title">Подписка на курс ухода</div>
+          <div class="vuln-desc">Профессиональный уход курсовой по природе — 3–6 месяцев. Ни один конкурент не предлагает ежемесячную подписку на персональный курс. LTV вырастет в 2–3 раза.</div>
+        </div>
+      </div>
+      <div class="vuln-row">
+        <div class="vuln-num">5</div>
+        <div class="vuln-body">
+          <div class="vuln-title">Рассрочка/BNPL (только 1 из 10 конкурентов использует)</div>
+          <div class="vuln-desc">При чеках 5 000–15 000 ₽ за полный курс рассрочка убирает главный ценовой барьер. Industria Krasoty одна использует — это огромная незанятая ниша.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ SLIDE 9 — PRICING ═══ -->
+  <div class="slide">
+    <p class="slide-label">Ценовые модели</p>
+    <h2>Сегменты рынка и незанятые ниши</h2>
+    <div class="price-section" style="flex:1;">
+      <div>
+        <h3 style="margin-bottom:14px;">Ценовые сегменты</h3>
+        <div class="price-segs">
+          <div class="price-seg seg-low">
+            <div class="price-seg-bar"></div>
+            <div class="price-seg-info">
+              <div class="price-seg-name">Доступный</div>
+              <div class="price-seg-range">200 – 800 ₽ / единица</div>
+              <div class="price-seg-ex">ARAVIA, M.Aklive — ставка на объём</div>
+            </div>
+          </div>
+          <div class="price-seg seg-mid">
+            <div class="price-seg-bar"></div>
+            <div class="price-seg-info">
+              <div class="price-seg-name">Средний</div>
+              <div class="price-seg-range">800 – 3 500 ₽ / единица</div>
+              <div class="price-seg-ex">Lamar, VIVAX, PLEYANA — цена / результат</div>
+            </div>
+          </div>
+          <div class="price-seg seg-prem">
+            <div class="price-seg-bar"></div>
+            <div class="price-seg-info">
+              <div class="price-seg-name">Премиум</div>
+              <div class="price-seg-range">3 500 – 12 000+ ₽ / единица</div>
+              <div class="price-seg-ex">BioGel, Mesopharm — концентрация + имидж</div>
+            </div>
+          </div>
+        </div>
+        <div style="margin-top:10px;background:rgba(212,103,90,.06);border:1px solid rgba(212,103,90,.2);border-radius:10px;padding:12px 14px;">
+          <p style="font-size:11px;color:var(--muted);line-height:1.6;">
+            <strong style="color:var(--red);">⚠ РРЦ-ограничение (Gemini):</strong> бренды Holy Land, Gigi, Janssen жёстко контролируют цену. Демпинговать — лишиться контракта. Обходят через: баллы/кэшбек, GWP-миниатюры, наборы-бандлы, промокоды блогеров.
+          </p>
+        </div>
+        <div style="margin-top:8px;background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:12px 14px;">
+          <p style="font-size:11px;color:var(--muted);line-height:1.6;">
+            <strong style="color:var(--text);">Маркетплейсы:</strong> WB — 166,8 млрд руб, Ozon — 80,4 млрд руб (косметика 2024). Ценовая конкуренция бессмысленна.
+          </p>
+        </div>
+      </div>
+      <div>
+        <h3 style="margin-bottom:14px;">Незанятые ниши</h3>
+        <div class="price-gaps">
+          <div class="gap-card">
+            <div class="gap-title">Подписка на курс ухода</div>
+            <div class="gap-desc">Ежемесячная поставка персонального курса. Предсказуемый LTV. <strong>Никто не делает.</strong></div>
+          </div>
+          <div class="gap-card">
+            <div class="gap-title">Trial-kit за 500–1 000 ₽</div>
+            <div class="gap-desc">Мини-набор на 7–14 дней для тестирования перед покупкой курса. Снижает барьер входа. <strong>Никто не делает.</strong></div>
+          </div>
+          <div class="gap-card">
+            <div class="gap-title">BNPL / Рассрочка</div>
+            <div class="gap-desc">3 платежа по 5 000 ₽ вместо 15 000 ₽ за курс. Только 1 конкурент из 10 использует. <strong>Быстрое внедрение — 2–5 дней.</strong></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ SLIDE 10 — STRATEGIES ═══ -->
+  <div class="slide">
+    <p class="slide-label">Стратегии отстройки</p>
+    <h2>10 способов выгодно отличиться</h2>
+    <div class="strat-grid">
+      <div class="strat-card">
+        <div class="strat-num">01</div>
+        <div class="strat-name">Магазин решений, не продуктов</div>
+        <div class="strat-desc">Навигация по задачам: «убрать пигментацию», «убрать акне», «поднять тургор» → готовый протокол</div>
+        <span class="strat-badge diff-mid">Средняя сложность</span>
+      </div>
+      <div class="strat-card">
+        <div class="strat-num">02</div>
+        <div class="strat-name">Гарантия результата 28 дней</div>
+        <div class="strat-desc">«Видимый эффект или вернём деньги» — никто на рынке не делает. Максимальный триггер доверия</div>
+        <span class="strat-badge diff-high">Высокая сложность</span>
+      </div>
+      <div class="strat-card">
+        <div class="strat-num">03</div>
+        <div class="strat-name">Именованный косметолог-куратор</div>
+        <div class="strat-desc">Покупатель выбирает «своего» косметолога. Консультирует в чате по всему курсу ухода</div>
+        <span class="strat-badge diff-high">Высокая сложность</span>
+      </div>
+      <div class="strat-card">
+        <div class="strat-num">04</div>
+        <div class="strat-name">Видеопротоколы применения</div>
+        <div class="strat-desc">К каждому товару — 2–3 мин видео: техника, частота, результат. Снимается один раз</div>
+        <span class="strat-badge diff-mid">Средняя сложность</span>
+      </div>
+      <div class="strat-card">
+        <div class="strat-num">05</div>
+        <div class="strat-name">Подписка на курс ухода</div>
+        <div class="strat-desc">Ежемесячная доставка персонального курса. LTV ×2–3. Никто из конкурентов не делает</div>
+        <span class="strat-badge diff-high">Высокая сложность</span>
+      </div>
+      <div class="strat-card">
+        <div class="strat-num">06</div>
+        <div class="strat-name">Специализация на одной проблеме</div>
+        <div class="strat-desc">Стать №1 в нише: anti-age 35+ или проблемная кожа. Узкий фокус = доверие + SEO</div>
+        <span class="strat-badge diff-low">Низкая сложность</span>
+      </div>
+      <div class="strat-card">
+        <div class="strat-num">07</div>
+        <div class="strat-name">AI-диагностика + программа</div>
+        <div class="strat-desc">Тест → программа ухода с SKU, расписанием, результатами. ARAVIA делает плохо — можно лучше</div>
+        <span class="strat-badge diff-high">Высокая сложность</span>
+      </div>
+      <div class="strat-card">
+        <div class="strat-num">08</div>
+        <div class="strat-name">Trial-kit за 700 ₽</div>
+        <div class="strat-desc">Мини-набор на 7–14 дней → автоматическая рекомендация полного курса со скидкой</div>
+        <span class="strat-badge diff-mid">Средняя сложность</span>
+      </div>
+      <div class="strat-card">
+        <div class="strat-num">09</div>
+        <div class="strat-name">WhatsApp-сопровождение курса</div>
+        <div class="strat-desc">После покупки — бот или живой эксперт в WhatsApp: напоминания, проверка эффекта, допродажа следующего курса. LTV ×2</div>
+        <span class="strat-badge diff-mid">Средняя сложность</span>
+      </div>
+      <div class="strat-card">
+        <div class="strat-num">10</div>
+        <div class="strat-name">GWP + мужская ниша</div>
+        <div class="strat-desc">GWP (Gift with Purchase): миниатюры вместо скидки — обходит РРЦ. Мужчины 30–45 лет с доходом выше среднего: ниша практически свободна</div>
+        <span class="strat-badge diff-low">Низкая сложность</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ SLIDE 11 — RECOMMENDATIONS ═══ -->
+  <div class="slide">
+    <p class="slide-label">Рекомендации</p>
+    <h2>5 направлений действий</h2>
+    <div class="reco-grid">
+      <div class="reco-card">
+        <div class="reco-icon">◎</div>
+        <div class="reco-name">Позиционирование</div>
+        <div class="reco-items">
+          <div class="reco-item">Выбрать 1–2 сегмента ЦА и говорить только с ними</div>
+          <div class="reco-item">Оффер: «результат за 21 день» вместо «проф. косметика»</div>
+          <div class="reco-item">Сформировать brand character — кто вы?</div>
+          <div class="reco-item">Уйти от конкуренции «кто шире» → «кто точнее»</div>
+        </div>
+      </div>
+      <div class="reco-card">
+        <div class="reco-icon">□</div>
+        <div class="reco-name">Сайт</div>
+        <div class="reco-items">
+          <div class="reco-item">Hero с проблемой, а не с ассортиментом</div>
+          <div class="reco-item">FAQ «Безопасно без косметолога?» — на главную</div>
+          <div class="reco-item">Видеопротоколы на карточках товара</div>
+          <div class="reco-item">До/после от домашнего применения</div>
+          <div class="reco-item">Рассрочка/BNPL видна в hero</div>
+        </div>
+      </div>
+      <div class="reco-card">
+        <div class="reco-icon">⌕</div>
+        <div class="reco-name">SEO</div>
+        <div class="reco-items">
+          <div class="reco-item">Статьи по проблемам: пигментация, акне, уход 40+</div>
+          <div class="reco-item">Сравнения: проф. vs аптечная косметика</div>
+          <div class="reco-item">Гиды «как выбрать при [проблеме]»</div>
+          <div class="reco-item">Не конкурировать с Galereya за категорийные запросы</div>
+        </div>
+      </div>
+      <div class="reco-card">
+        <div class="reco-icon">◈</div>
+        <div class="reco-name">Реклама</div>
+        <div class="reco-items">
+          <div class="reco-item">Ключи по проблемам, не по продуктам</div>
+          <div class="reco-item">Заголовки с результатом: «−70% пигментации за 4 недели»</div>
+          <div class="reco-item">Ретаргетинг с кейсами до/после</div>
+          <div class="reco-item">Нативные интеграции у косметологов в Telegram</div>
+        </div>
+      </div>
+      <div class="reco-card">
+        <div class="reco-icon">◉</div>
+        <div class="reco-name">Контент и доверие</div>
+        <div class="reco-items">
+          <div class="reco-item">«Школа домашнего ухода» — серия статей и видео</div>
+          <div class="reco-item">UGC: конкурс «до/после через 30 дней»</div>
+          <div class="reco-item">Именованные эксперты с реальным профилем</div>
+          <div class="reco-item">Прозрачность состава и концентраций активов</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ SLIDE 12 — PRIORITIES ═══ -->
+  <div class="slide">
+    <p class="slide-label">Приоритеты</p>
+    <h2>Таблица приоритетных гипотез</h2>
+    <div class="prio-table">
+      <div class="prio-row">
+        <div class="prio-cell head" style="justify-content:center;">#</div>
+        <div class="prio-cell head">Гипотеза</div>
+        <div class="prio-cell head" style="justify-content:center;">Эффект</div>
+        <div class="prio-cell head" style="justify-content:center;">Сложность</div>
+        <div class="prio-cell head">Приоритет</div>
+      </div>
+      <div class="prio-row">
+        <div class="prio-cell num">1</div>
+        <div class="prio-cell hypothesis">Переписать оффер — «результат за 21 день»</div>
+        <div class="prio-cell" style="justify-content:center;"><span class="eff-badge">+15–25% CR</span></div>
+        <div class="prio-cell" style="justify-content:center;"><span class="badge-high">Низкая</span></div>
+        <div class="prio-cell"><span class="badge-high">HIGH</span></div>
+      </div>
+      <div class="prio-row">
+        <div class="prio-cell num">2</div>
+        <div class="prio-cell hypothesis">FAQ «Безопасно без мастера» на главной</div>
+        <div class="prio-cell" style="justify-content:center;"><span class="eff-badge">−20% отказы</span></div>
+        <div class="prio-cell" style="justify-content:center;"><span class="badge-high">Низкая</span></div>
+        <div class="prio-cell"><span class="badge-high">HIGH</span></div>
+      </div>
+      <div class="prio-row">
+        <div class="prio-cell num">3</div>
+        <div class="prio-cell hypothesis">SEO-контент по проблемам кожи (10–20 статей)</div>
+        <div class="prio-cell" style="justify-content:center;"><span class="eff-badge">+40–60% трафик</span></div>
+        <div class="prio-cell" style="justify-content:center;"><span class="badge-medium">Средняя</span></div>
+        <div class="prio-cell"><span class="badge-high">HIGH</span></div>
+      </div>
+      <div class="prio-row">
+        <div class="prio-cell num">4</div>
+        <div class="prio-cell hypothesis">Подключить рассрочку / BNPL</div>
+        <div class="prio-cell" style="justify-content:center;"><span class="eff-badge">+10–20% CR</span></div>
+        <div class="prio-cell" style="justify-content:center;"><span class="badge-high">Низкая</span></div>
+        <div class="prio-cell"><span class="badge-high">HIGH</span></div>
+      </div>
+      <div class="prio-row">
+        <div class="prio-cell num">5</div>
+        <div class="prio-cell hypothesis">Видеопротоколы применения к топ-30 товарам</div>
+        <div class="prio-cell" style="justify-content:center;"><span class="eff-badge">+LTV, +время</span></div>
+        <div class="prio-cell" style="justify-content:center;"><span class="badge-medium">Средняя</span></div>
+        <div class="prio-cell"><span class="badge-high">HIGH</span></div>
+      </div>
+      <div class="prio-row">
+        <div class="prio-cell num">6</div>
+        <div class="prio-cell hypothesis">Trial-kit мини-наборы за 500–1 000 ₽</div>
+        <div class="prio-cell" style="justify-content:center;"><span class="eff-badge">новые клиенты</span></div>
+        <div class="prio-cell" style="justify-content:center;"><span class="badge-medium">Средняя</span></div>
+        <div class="prio-cell"><span class="badge-medium">MEDIUM</span></div>
+      </div>
+      <div class="prio-row">
+        <div class="prio-cell num">7</div>
+        <div class="prio-cell hypothesis">Telegram-сообщество + косметолог в чате</div>
+        <div class="prio-cell" style="justify-content:center;"><span class="eff-badge">−30% отток</span></div>
+        <div class="prio-cell" style="justify-content:center;"><span class="badge-medium">Средняя</span></div>
+        <div class="prio-cell"><span class="badge-medium">MEDIUM</span></div>
+      </div>
+      <div class="prio-row">
+        <div class="prio-cell num">8</div>
+        <div class="prio-cell hypothesis">Гарантия результата 28 дней</div>
+        <div class="prio-cell" style="justify-content:center;"><span class="eff-badge">+15–30% CR</span></div>
+        <div class="prio-cell" style="justify-content:center;"><span class="badge-low2">Высокая</span></div>
+        <div class="prio-cell"><span class="badge-medium">MEDIUM</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ SLIDE 13 — 30 DAYS PLAN ═══ -->
+  <div class="slide">
+    <p class="slide-label">Действия</p>
+    <h2>План на первые 30 дней</h2>
+    <div class="plan-grid">
+      <div class="week-card">
+        <div class="week-header">
+          <div class="week-num">1</div>
+          <div class="week-title">Быстрые победы<br><span style="color:var(--muted);font-size:11px;font-weight:400;">Нулевые затраты</span></div>
+        </div>
+        <div class="week-items">
+          <div class="week-item"><strong style="color:var(--gold);">★ Приоритет №1:</strong> Запустить квиз подбора ухода (все 3 AI сходятся — главный конверсионный инструмент)</div>
+          <div class="week-item">Переписать H1 и meta title — убрать «проф. косметика», добавить оффер с результатом</div>
+          <div class="week-item">FAQ на главную: «Безопасно без косметолога?», «Чем лучше обычной?»</div>
+          <div class="week-item">Подключить BNPL (2–5 дней технически)</div>
+        </div>
+      </div>
+      <div class="week-card">
+        <div class="week-header">
+          <div class="week-num">2</div>
+          <div class="week-title">Контент-база</div>
+        </div>
+        <div class="week-items">
+          <div class="week-item">3 SEO-статьи: пигментация, акне, уход после 40</div>
+          <div class="week-item">5 видеоинструкций к топ-товарам (применение + результат)</div>
+          <div class="week-item">10 кейсов «до/после» от покупателей (скидка за отзыв с фото)</div>
+        </div>
+      </div>
+      <div class="week-card">
+        <div class="week-header">
+          <div class="week-num">3</div>
+          <div class="week-title">Рекламные тесты</div>
+        </div>
+        <div class="week-items">
+          <div class="week-item">A/Б тест в Директе: старый заголовок vs «результат за N дней»</div>
+          <div class="week-item">Ретаргетинг с кейсами для отказников</div>
+          <div class="week-item">2–3 нативные интеграции у косметологов в Telegram</div>
+        </div>
+      </div>
+      <div class="week-card">
+        <div class="week-header">
+          <div class="week-num">4</div>
+          <div class="week-title">Измерение и план</div>
+        </div>
+        <div class="week-items">
+          <div class="week-item">Замерить конверсию до/после изменений (цели в Яндекс.Метрике)</div>
+          <div class="week-item">Контент-план на 3 месяца по SEO</div>
+          <div class="week-item">Концепция trial-kit: выбрать 1–2 проблемы, unit-экономика</div>
+          <div class="week-item">Решение по Telegram-каналу для покупателей</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ SLIDE 14 — FINAL ═══ -->
+  <div class="slide s-final">
+    <p class="slide-label">Главный вывод</p>
+    <div class="final-main">
+      Не просто товары —<br>
+      <em>готовые схемы от экспертов.</em>
+    </div>
+    <div class="rule"></div>
+    <p style="font-size:14px;color:var(--muted);max-width:620px;line-height:1.8;margin-bottom:28px;">
+      Формула позиционирования (GPT × Gemini × Claude): <strong style="color:var(--text);">«Профессиональная косметика для домашнего ухода — не просто товары, а готовые схемы от экспертов: что, зачем, как использовать и с чем сочетать»</strong>. Рынок перегрет. Место для игрока, который объясняет и гарантирует — свободно.
+    </p>
+    <div class="final-cards">
+      <div class="final-card"><strong>Шаг 1</strong>Запустить квиз подбора ухода — консенсус трёх AI, главный конверсионный инструмент.</div>
+      <div class="final-card"><strong>Шаг 2</strong>Переписать оффер: «результат за 21 день» вместо «профессиональная косметика». +15–25% CR.</div>
+      <div class="final-card"><strong>Шаг 3</strong>FAQ «Безопасно без мастера?» + BNPL-рассрочка: закрыть два главных барьера входа.</div>
+      <div class="final-card"><strong>Цель — 90 дней</strong>Стать первым в нише, кто продаёт не косметику — а измеримый результат с готовыми схемами.</div>
+    </div>
+  </div>
+
+</div><!-- /deck -->
+
+<!-- NAV -->
+<div class="nav">
+  <button class="nav-btn" id="prev" title="Назад">&#8592;</button>
+  <div class="nav-counter" id="counter">1 / 15</div>
+  <button class="nav-btn" id="next" title="Вперёд">&#8594;</button>
+</div>
+
+<script>
+  const slides = Array.from(document.querySelectorAll('.slide'));
+  const total  = slides.length;
+  let current  = 0;
+
+  function goTo(n) {
+    if (n < 0 || n >= total) return;
+    slides[current].classList.remove('active');
+    slides[current].classList.add('exit');
+    setTimeout(() => slides[current].classList.remove('exit'), 500);
+    current = n;
+    slides[current].classList.add('active');
+    document.getElementById('counter').textContent = (current + 1) + ' / ' + total;
+    document.getElementById('progress-bar').style.width = ((current + 1) / total * 100) + '%';
+  }
+
+  document.getElementById('next').addEventListener('click', () => goTo(current + 1));
+  document.getElementById('prev').addEventListener('click', () => goTo(current - 1));
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ') { e.preventDefault(); goTo(current + 1); }
+    if (e.key === 'ArrowLeft'  || e.key === 'ArrowUp')                    { e.preventDefault(); goTo(current - 1); }
+    if (e.key === 'Home')  { e.preventDefault(); goTo(0); }
+    if (e.key === 'End')   { e.preventDefault(); goTo(total - 1); }
+  });
+
+  // Touch swipe
+  let touchStartX = 0;
+  document.addEventListener('touchstart', e => { touchStartX = e.touches[0].clientX; }, { passive: true });
+  document.addEventListener('touchend', e => {
+    const dx = e.changedTouches[0].clientX - touchStartX;
+    if (Math.abs(dx) > 60) dx < 0 ? goTo(current + 1) : goTo(current - 1);
+  }, { passive: true });
+
+  // Init progress bar
+  document.getElementById('progress-bar').style.width = (1 / total * 100) + '%';
+</script>
+</body>
+</html>

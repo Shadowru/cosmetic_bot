@@ -1,0 +1,688 @@
+{
+  "biorevit": {
+    "acute": {
+      "label": "Дни 1–2 (острая фаза)",
+      "steps": [
+        {
+          "note": "Только прохладная вода или мицеллярная",
+          "products": [
+            {
+              "name": "Bioderma Sensibio H2O мицеллярная",
+              "ozon_url": "https://www.ozon.ru/product/bioderma-sensibio-h2o-mitsellyarnaya-voda-dlya-ochishcheniya-normalnoy-i-chuvstvitelnoy-kozhi-litsa-1306292961",
+              "wb_url": ""
+            },
+            {
+              "name": "Avène Micellar Lotion",
+              "ozon_url": "https://www.ozon.ru/product/avene-mitsellyarnyy-loson-dlya-ochishcheniya-kozhi-i-udaleniya-makiyazha-sredstvo-dlya-snyatiya-670856421/",
+              "wb_url": ""
+            }
+          ],
+          "step": "Очищение"
+        },
+        {
+          "note": "Лёгкий — не тяжёлые масла",
+          "products": [
+            {
+              "name": "Bioderma Sensibio Light",
+              "ozon_url": "https://www.ozon.ru/product/bioderma-sensibio-krem-dlya-litsa-uvlazhnyayushchiy-legkiy-dlya-chuvstvitelnoy-kozhi-40-ml-1306312262/",
+              "wb_url": ""
+            },
+            {
+              "name": "Avène Skin Recovery Cream",
+              "ozon_url": "",
+              "wb_url": ""
+            },
+            {
+              "name": "Librederm Церамиды крем",
+              "ozon_url": "https://www.ozon.ru/product/librederm-krem-dlya-litsa-i-tela-tserafavit-normalnoy-suhoy-i-atopicheskoy-kozhi-ot-0-75ml-301855197/",
+              "wb_url": ""
+            }
+          ],
+          "step": "Успокаивающий крем"
+        },
+        {
+          "note": "Наносить аккуратно вокруг, не массируя",
+          "products": [
+            {
+              "name": "Доктор Тайсс Арника гель",
+              "ozon_url": "",
+              "wb_url": ""
+            },
+            {
+              "name": "Лиотон 1000 гель (гепарин)",
+              "ozon_url": "",
+              "wb_url": ""
+            },
+            {
+              "name": "Гепариновая мазь (аптечная)",
+              "ozon_url": "",
+              "wb_url": ""
+            }
+          ],
+          "step": "От синяков (если есть)"
+        }
+      ]
+    },
+    "name": "После биоревитализации",
+    "recovery": {
+      "label": "Дни 3–7 (восстановление)",
+      "steps": [
+        {
+          "note": "Гиалуроновая кислота — помогает гиалуронату «работать»",
+          "products": [
+            {
+              "name": "Neutrogena Hydro Boost Water Gel",
+              "ozon_url": "",
+              "wb_url": ""
+            },
+            {
+              "name": "Librederm Гиалуроновый крем",
+              "ozon_url": "",
+              "wb_url": ""
+            },
+            {
+              "name": "Bioderma Hydrabio Gel-crème",
+              "ozon_url": "",
+              "wb_url": ""
+            }
+          ],
+          "step": "Лёгкий увлажняющий крем"
+        },
+        {
+          "note": "Физический, SPF 30–50 достаточно",
+          "products": [
+            {
+              "name": "Uriage Bariésun Mineral SPF 50+",
+              "ozon_url": "",
+              "wb_url": ""
+            },
+            {
+              "name": "Avène Minéral Crème SPF 50+",
+              "ozon_url": "",
+              "wb_url": ""
+            }
+          ],
+          "step": "SPF"
+        }
+      ]
+    }
+  },
+  "chistka": {
+    "acute": {
+      "label": "День 1 (острая фаза)",
+      "steps": [
+        {
+          "note": "Один день острой фазы — самая лёгкая процедура",
+          "products": [
+            {
+              "name": "Bioderma Sensibio Light",
+              "ozon_url": "",
+              "wb_url": ""
+            },
+            {
+              "name": "Avène Skin Recovery Cream",
+              "ozon_url": "",
+              "wb_url": ""
+            },
+            {
+              "name": "La-Cri Крем успокаивающий",
+              "ozon_url": "",
+              "wb_url": ""
+            }
+          ],
+          "step": "Успокаивающий крем"
+        },
+        {
+          "products": [
+            {
+              "name": "Uriage Bariésun Mineral SPF 50+",
+              "ozon_url": "",
+              "wb_url": ""
+            },
+            {
+              "name": "Avène Minéral Crème SPF 50+",
+              "ozon_url": "",
+              "wb_url": ""
+            }
+          ],
+          "step": "Физический SPF 50"
+        }
+      ]
+    },
+    "name": "После ультразвуковой чистки",
+    "recovery": {
+      "label": "Дни 2–5 (восстановление)",
+      "steps": [
+        {
+          "note": "Без ретинола ещё 5–7 дней — всё остальное можно",
+          "products": [
+            {
+              "name": "Bioderma Hydrabio Gel-crème",
+              "ozon_url": "",
+              "wb_url": ""
+            },
+            {
+              "name": "Neutrogena Hydro Boost Water Gel",
+              "ozon_url": "",
+              "wb_url": ""
+            }
+          ],
+          "step": "Обычный уход"
+        },
+        {
+          "products": [
+            {
+              "name": "Любой привычный SPF 30+",
+              "ozon_url": "",
+              "wb_url": ""
+            }
+          ],
+          "step": "SPF"
+        }
+      ]
+    }
+  },
+  "dermaroller": {
+    "acute": {
+      "label": "Дни 1–3 (острая фаза)",
+      "steps": [
+        {
+          "note": "Без SLS, без отдушек",
+          "products": [
+            {
+              "name": "Bioderma Sensibio Gel Moussant",
+              "ozon_url": "",
+              "wb_url": ""
+            },
+            {
+              "name": "La Roche-Posay Toleriane Gel",
+              "ozon_url": "",
+              "wb_url": ""
+            }
+          ],
+          "step": "Очищение"
+        },
+        {
+          "products": [
+            {
+              "name": "Bioderma Cicabio Crème",
+              "ozon_url": "",
+              "wb_url": ""
+            },
+            {
+              "name": "Avène Cicalfate+",
+              "ozon_url": "",
+              "wb_url": ""
+            }
+          ],
+          "step": "Заживляющий крем"
+        },
+        {
+          "note": "С 3 дня — микроканалы открыты, проникновение лучше",
+          "products": [
+            {
+              "name": "The Ordinary Hyaluronic Acid 2% + B5",
+              "ozon_url": "",
+              "wb_url": ""
+            },
+            {
+              "name": "Librederm Гиалуроновая сыворотка",
+              "ozon_url": "",
+              "wb_url": ""
+            },
+            {
+              "name": "Bioderma Hydrabio Sérum",
+              "ozon_url": "",
+              "wb_url": ""
+            }
+          ],
+          "step": "Сыворотка с гиалуроновой кислотой"
+        },
+        {
+          "products": [
+            {
+              "name": "Isdin Eryfotona Actinica SPF 100",
+              "ozon_url": "",
+              "wb_url": ""
+            },
+            {
+              "name": "Uriage Bariésun Mineral SPF 50+",
+              "ozon_url": "",
+              "wb_url": ""
+            }
+          ],
+          "step": "Физический SPF 50"
+        }
+      ]
+    },
+    "name": "После дермароллера",
+    "recovery": {
+      "label": "Дни 4–10 (восстановление)",
+      "steps": [
+        {
+          "products": [
+            {
+              "name": "Neutrogena Hydro Boost Water Gel",
+              "ozon_url": "",
+              "wb_url": ""
+            },
+            {
+              "name": "Bioderma Hydrabio Gel-crème",
+              "ozon_url": "",
+              "wb_url": ""
+            }
+          ],
+          "step": "Увлажняющий крем"
+        },
+        {
+          "products": [
+            {
+              "name": "Isdin Eryfotona Actinica SPF 100",
+              "ozon_url": "",
+              "wb_url": ""
+            }
+          ],
+          "step": "SPF 50"
+        }
+      ]
+    }
+  },
+  "laser": {
+    "acute": {
+      "label": "Дни 1–5 (острая фаза)",
+      "steps": [
+        {
+          "note": "Без SLS и отдушек",
+          "products": [
+            {
+              "name": "Bioderma Sensibio Gel Moussant",
+              "ozon_url": "https://www.ozon.ru/product/bioderma-sensibio-gel-dlya-umyvaniya-ochishchayushchiy-dlya-normalnoy-i-chuvstvitelnoy-kozhi-litsa-1306190886/",
+              "wb_url": ""
+            },
+            {
+              "name": "Avène Cleanance Hydra",
+              "ozon_url": "https://www.ozon.ru/product/avene-cleanance-hydra-uspokaivayushchiy-krem-vosstanavlivayushchiy-komfort-kozhi-aven-klinans-gidra-1842400903/",
+              "wb_url": ""
+            },
+            {
+              "name": "La Roche-Posay Toleriane Gel",
+              "ozon_url": "",
+              "wb_url": ""
+            }
+          ],
+          "step": "Очищение"
+        },
+        {
+          "note": "Мадекасозид или пантенол — не создаёт плёнку",
+          "products": [
+            {
+              "name": "Bioderma Cicabio Crème",
+              "ozon_url": "https://www.ozon.ru/product/bioderma-cicabio-krem-plyus-vosstanavlivayushchiy-i-uspokaivayushchiy-40-ml-1499991995/",
+              "wb_url": ""
+            },
+            {
+              "name": "Avène Cicalfate+",
+              "ozon_url": "",
+              "wb_url": ""
+            },
+            {
+              "name": "Librederm Пантенол крем 5%",
+              "ozon_url": "https://www.ozon.ru/product/librederm-krem-pantenol-5-zazhivlyayushchiy-ot-solnechnyh-ozhogov-treshchin-suhosti-307855769/",
+              "wb_url": ""
+            },
+            {
+              "name": "La-Cri Крем успокаивающий",
+              "ozon_url": "",
+              "wb_url": ""
+            }
+          ],
+          "step": "Заживляющий крем"
+        },
+        {
+          "note": "Увлажнять каждые 2–3 часа, не трогая лицо руками",
+          "products": [
+            {
+              "name": "Avène Thermal Spring Water 150мл",
+              "ozon_url": "https://www.ozon.ru/product/aven-termalnaya-voda-150-ml-avene-thermal-spring-water-sensitive-skin-935939338/",
+              "wb_url": ""
+            },
+            {
+              "name": "Uriage Thermal Water 300мл",
+              "ozon_url": "",
+              "wb_url": ""
+            },
+            {
+              "name": "La Roche-Posay Thermal Water",
+              "ozon_url": "",
+              "wb_url": ""
+            }
+          ],
+          "step": "Термальная вода"
+        },
+        {
+          "note": "Только минеральные фильтры — Zinc Oxide или Titanium Dioxide",
+          "products": [
+            {
+              "name": "Isdin Eryfotona Actinica SPF 100",
+              "ozon_url": "",
+              "wb_url": ""
+            },
+            {
+              "name": "Avène Minéral Crème SPF 50+",
+              "ozon_url": "https://www.ozon.ru/product/avene-mineralnyy-solntsezashchitnyy-krem-spf-50-2410077207/",
+              "wb_url": ""
+            },
+            {
+              "name": "Uriage Bariésun Mineral SPF 50+",
+              "ozon_url": "",
+              "wb_url": ""
+            }
+          ],
+          "step": "Физический SPF 50"
+        }
+      ]
+    },
+    "name": "После лазерной шлифовки",
+    "recovery": {
+      "label": "Дни 6–21 (восстановление)",
+      "steps": [
+        {
+          "note": "То же что в острой фазе",
+          "products": [
+            {
+              "name": "Bioderma Sensibio Gel Moussant",
+              "ozon_url": "https://www.ozon.ru/product/bioderma-sensibio-gel-dlya-umyvaniya-ochishchayushchiy-dlya-normalnoy-i-chuvstvitelnoy-kozhi-litsa-1306190886/",
+              "wb_url": ""
+            },
+            {
+              "name": "La Roche-Posay Toleriane Gel",
+              "ozon_url": "",
+              "wb_url": ""
+            }
+          ],
+          "step": "Очищение"
+        },
+        {
+          "note": "Гиалуроновая кислота или ниацинамид — не раньше 6 дня",
+          "products": [
+            {
+              "name": "Librederm Гиалуроновая сыворотка",
+              "ozon_url": "https://www.ozon.ru/product/librederm-syvorotka-dlya-litsa-uvlazhnyayushchaya-s-gialuronom-30ml-306113607/",
+              "wb_url": ""
+            },
+            {
+              "name": "The Ordinary Hyaluronic Acid 2% + B5",
+              "ozon_url": "https://www.ozon.ru/product/syvorotka-s-gialuronovoy-kislotoy-the-ordinary-hyaluronic-acid-2-b5-dlya-glubokogo-uvlazhneniya-2234373407/",
+              "wb_url": ""
+            },
+            {
+              "name": "Bioderma Hydrabio Sérum",
+              "ozon_url": "",
+              "wb_url": ""
+            }
+          ],
+          "step": "Увлажняющая сыворотка"
+        },
+        {
+          "note": "Церамиды + сквалан",
+          "products": [
+            {
+              "name": "Bioderma Sensibio Rich",
+              "ozon_url": "",
+              "wb_url": ""
+            },
+            {
+              "name": "Librederm Церамиды крем",
+              "ozon_url": "",
+              "wb_url": ""
+            }
+          ],
+          "step": "Восстанавливающий крем"
+        },
+        {
+          "note": "Обязателен весь период — кожа уязвима к пигментации",
+          "products": [
+            {
+              "name": "Isdin Eryfotona Actinica SPF 100",
+              "ozon_url": "",
+              "wb_url": ""
+            },
+            {
+              "name": "Avène Minéral Crème SPF 50+",
+              "ozon_url": "https://www.ozon.ru/product/avene-mineralnyy-solntsezashchitnyy-krem-spf-50-2410077207/",
+              "wb_url": ""
+            }
+          ],
+          "step": "Физический SPF 50"
+        }
+      ]
+    }
+  },
+  "piling": {
+    "acute": {
+      "label": "Дни 1–3 (острая фаза)",
+      "steps": [
+        {
+          "note": "День 1 — только мицеллярная вода, без геля",
+          "products": [
+            {
+              "name": "Bioderma Sensibio H2O мицеллярная",
+              "ozon_url": "",
+              "wb_url": ""
+            },
+            {
+              "name": "Avène Micellar Lotion",
+              "ozon_url": "",
+              "wb_url": ""
+            }
+          ],
+          "step": "Очищение"
+        },
+        {
+          "note": "Пантенол или центелла — без активных компонентов",
+          "products": [
+            {
+              "name": "Avène Cicalfate+",
+              "ozon_url": "",
+              "wb_url": ""
+            },
+            {
+              "name": "Bioderma Cicabio Crème",
+              "ozon_url": "",
+              "wb_url": ""
+            },
+            {
+              "name": "Librederm Пантенол крем 5%",
+              "ozon_url": "",
+              "wb_url": ""
+            }
+          ],
+          "step": "Успокаивающий крем"
+        },
+        {
+          "note": "Обязателен — кислоты делают кожу максимально фоточувствительной",
+          "products": [
+            {
+              "name": "Isdin Eryfotona Actinica SPF 100",
+              "ozon_url": "",
+              "wb_url": ""
+            },
+            {
+              "name": "Uriage Bariésun Mineral SPF 50+",
+              "ozon_url": "",
+              "wb_url": ""
+            }
+          ],
+          "step": "Физический SPF 50"
+        }
+      ]
+    },
+    "name": "После химического пилинга",
+    "recovery": {
+      "label": "Дни 4–10 (восстановление)",
+      "steps": [
+        {
+          "note": "Теперь можно гель, но без SLS",
+          "products": [
+            {
+              "name": "Bioderma Sensibio Gel Moussant",
+              "ozon_url": "",
+              "wb_url": ""
+            },
+            {
+              "name": "La Roche-Posay Toleriane Gel",
+              "ozon_url": "",
+              "wb_url": ""
+            }
+          ],
+          "step": "Мягкое очищение"
+        },
+        {
+          "note": "Лёгкое, без активных кислот",
+          "products": [
+            {
+              "name": "Bioderma Hydrabio Gel-crème",
+              "ozon_url": "",
+              "wb_url": ""
+            },
+            {
+              "name": "Neutrogena Hydro Boost Water Gel",
+              "ozon_url": "",
+              "wb_url": ""
+            }
+          ],
+          "step": "Увлажнение"
+        },
+        {
+          "note": "Весь период обязателен",
+          "products": [
+            {
+              "name": "Isdin Eryfotona Actinica SPF 100",
+              "ozon_url": "",
+              "wb_url": ""
+            },
+            {
+              "name": "Avène Minéral Crème SPF 50+",
+              "ozon_url": "",
+              "wb_url": ""
+            }
+          ],
+          "step": "SPF 50"
+        }
+      ]
+    }
+  },
+  "rf": {
+    "acute": {
+      "label": "Дни 1–3 (острая фаза)",
+      "steps": [
+        {
+          "note": "Мягкое, без SLS",
+          "products": [
+            {
+              "name": "Bioderma Sensibio Gel Moussant",
+              "ozon_url": "https://www.ozon.ru/product/bioderma-sensibio-gel-dlya-umyvaniya-ochishchayushchiy-dlya-normalnoy-i-chuvstvitelnoy-kozhi-litsa-1306190886/",
+              "wb_url": ""
+            },
+            {
+              "name": "La Roche-Posay Toleriane Gel",
+              "ozon_url": "",
+              "wb_url": ""
+            }
+          ],
+          "step": "Очищение"
+        },
+        {
+          "note": "Мадекасозид или пантенол",
+          "products": [
+            {
+              "name": "Bioderma Cicabio Crème",
+              "ozon_url": "https://www.ozon.ru/product/bioderma-cicabio-krem-plyus-vosstanavlivayushchiy-i-uspokaivayushchiy-40-ml-1499991995/",
+              "wb_url": ""
+            },
+            {
+              "name": "Avène Cicalfate+",
+              "ozon_url": "",
+              "wb_url": ""
+            },
+            {
+              "name": "Librederm Пантенол крем 5%",
+              "ozon_url": "https://www.ozon.ru/product/librederm-krem-pantenol-5-zazhivlyayushchiy-ot-solnechnyh-ozhogov-treshchin-suhosti-307855769/",
+              "wb_url": ""
+            }
+          ],
+          "step": "Заживляющий крем"
+        },
+        {
+          "note": "Охлаждает и увлажняет",
+          "products": [
+            {
+              "name": "Avène Thermal Spring Water",
+              "ozon_url": "",
+              "wb_url": ""
+            },
+            {
+              "name": "Uriage Thermal Water",
+              "ozon_url": "",
+              "wb_url": ""
+            }
+          ],
+          "step": "Термальная вода"
+        },
+        {
+          "note": "Обязателен",
+          "products": [
+            {
+              "name": "Isdin Eryfotona Actinica SPF 100",
+              "ozon_url": "",
+              "wb_url": ""
+            },
+            {
+              "name": "Bioderma Photoderm Max SPF 50+",
+              "ozon_url": "",
+              "wb_url": ""
+            }
+          ],
+          "step": "Физический SPF 50"
+        }
+      ]
+    },
+    "name": "После RF-лифтинга",
+    "recovery": {
+      "label": "Дни 4–10 (восстановление)",
+      "steps": [
+        {
+          "note": "Теперь можно чуть более плотный",
+          "products": [
+            {
+              "name": "Bioderma Sensibio Rich",
+              "ozon_url": "",
+              "wb_url": ""
+            },
+            {
+              "name": "Librederm Церамиды крем",
+              "ozon_url": "",
+              "wb_url": ""
+            }
+          ],
+          "step": "Питательный крем"
+        },
+        {
+          "products": [
+            {
+              "name": "Isdin Eryfotona Actinica SPF 100",
+              "ozon_url": "",
+              "wb_url": ""
+            },
+            {
+              "name": "Avène Minéral Crème SPF 50+",
+              "ozon_url": "https://www.ozon.ru/product/avene-mineralnyy-solntsezashchitnyy-krem-spf-50-2410077207/",
+              "wb_url": ""
+            }
+          ],
+          "step": "SPF 50"
+        }
+      ]
+    }
+  }
+}

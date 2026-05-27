@@ -1,0 +1,54 @@
+# ── Секреты (НИКОГДА не коммитим) ─────────────────────────────────────
+.env
+.env.local
+*.env
+
+# OAuth / cookies / API credentials
+post_procedure/yt_token.json
+post_procedure/yt_credentials.json
+post_procedure/tiktok_cookies.json
+
+# ── Runtime данные бота (генерируется при работе) ────────────────────
+post_procedure/analytics.json
+post_procedure/content_queue.json
+post_procedure/content_plan.json
+post_procedure/channel_state.json
+post_procedure/autopublish.flag
+post_procedure/lead_magnets.json
+post_procedure/research_cache.json
+
+# ── Логи ──────────────────────────────────────────────────────────────
+post_procedure/bot.log
+post_procedure/bot.log.*
+*.log
+/tmp/*.log
+
+# ── Большие/генерируемые ассеты ──────────────────────────────────────
+post_procedure/shorts/
+post_procedure/research_audio/
+
+# ── Python ───────────────────────────────────────────────────────────
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache/
+.mypy_cache/
+*.egg-info/
+.venv/
+venv/
+
+# ── IDE / OS ─────────────────────────────────────────────────────────
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+*.swp
+*~
+
+# ── Прочие большие файлы исследований (по желанию) ───────────────────
+# Если решим не коммитить .docx исследования:
+# other_researches/*.docx
+
+# ── Скачанное случайно (не нужно в репо) ─────────────────────────────
+*.cmfv

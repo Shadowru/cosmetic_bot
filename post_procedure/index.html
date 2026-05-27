@@ -1,0 +1,1743 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="PostCare — магазин средств для домашнего ухода после косметологических процедур. Правильные средства после лазера, биоревитализации, RF-лифтинга. Готовые наборы от косметологов.">
+  <meta name="keywords" content="уход после лазера, средства после биоревитализации, постпроцедурный уход, уход после RF-лифтинга, что делать после косметологии">
+  <meta property="og:title" content="PostCare — уход после косметологических процедур">
+  <meta property="og:description" content="Готовые наборы средств под вашу процедуру. Составлено косметологами.">
+  <meta property="og:type" content="website">
+  <title>PostCare — правильный уход после косметологических процедур</title>
+
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --cream:        #FAF7F2;
+      --cream-deep:   #F2ECE3;
+      --sage:         #4A6741;
+      --sage-light:   #7A9B6E;
+      --sage-pale:    #D6E6CF;
+      --peach:        #E8C5A8;
+      --peach-deep:   #C9956B;
+      --text-dark:    #2B2320;
+      --text-mid:     #6B5E56;
+      --text-light:   #A89A90;
+      --white:        #FFFFFF;
+
+      --radius-sm:  8px;
+      --radius-md:  16px;
+      --radius-lg:  28px;
+      --radius-xl:  48px;
+
+      --shadow-soft: 0 4px 24px rgba(74,103,65,0.08);
+      --shadow-card: 0 8px 40px rgba(43,35,32,0.10);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--cream);
+      color: var(--text-dark);
+      font-size: 16px;
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    /* ─── UTILITIES ──────────────────────────────── */
+    .container {
+      max-width: 480px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+
+    @media (min-width: 768px) {
+      .container { max-width: 680px; padding: 0 32px; }
+    }
+
+    @media (min-width: 1024px) {
+      .container { max-width: 900px; }
+    }
+
+    /* ─── FADE-IN ANIMATIONS ─────────────────────── */
+    .reveal {
+      opacity: 0;
+      transform: translateY(28px);
+      transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .reveal-delay-1 { transition-delay: 0.1s; }
+    .reveal-delay-2 { transition-delay: 0.2s; }
+    .reveal-delay-3 { transition-delay: 0.3s; }
+    .reveal-delay-4 { transition-delay: 0.4s; }
+
+    /* ─── NAV ────────────────────────────────────── */
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(250,247,242,0.92);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(74,103,65,0.1);
+      padding: 14px 0;
+    }
+
+    .nav-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .nav-logo {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.35rem;
+      font-weight: 700;
+      color: var(--sage);
+      text-decoration: none;
+      letter-spacing: -0.01em;
+    }
+    .nav-logo span {
+      color: var(--peach-deep);
+    }
+
+    .nav-cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--sage);
+      color: var(--white);
+      text-decoration: none;
+      font-size: 0.82rem;
+      font-weight: 500;
+      padding: 8px 16px;
+      border-radius: 100px;
+      transition: background 0.2s, transform 0.15s;
+    }
+    .nav-cta:hover { background: #3a5233; transform: scale(1.03); }
+    .nav-cta svg { width: 14px; height: 14px; flex-shrink: 0; }
+
+    /* ─── HERO ───────────────────────────────────── */
+    .hero {
+      padding: 60px 0 52px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-blob {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(60px);
+      pointer-events: none;
+      z-index: 0;
+    }
+    .hero-blob-1 {
+      width: 320px; height: 320px;
+      background: var(--sage-pale);
+      top: -80px; right: -80px;
+      opacity: 0.6;
+    }
+    .hero-blob-2 {
+      width: 260px; height: 260px;
+      background: var(--peach);
+      bottom: -60px; left: -60px;
+      opacity: 0.45;
+    }
+
+    .hero-content { position: relative; z-index: 1; }
+
+    .hero-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--sage-pale);
+      color: var(--sage);
+      font-size: 0.75rem;
+      font-weight: 500;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 6px 14px;
+      border-radius: 100px;
+      margin-bottom: 20px;
+    }
+    .hero-eyebrow::before {
+      content: '';
+      width: 6px; height: 6px;
+      background: var(--sage);
+      border-radius: 50%;
+      display: inline-block;
+    }
+
+    .hero-title {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2rem, 8vw, 3rem);
+      font-weight: 700;
+      line-height: 1.15;
+      color: var(--text-dark);
+      letter-spacing: -0.02em;
+      margin-bottom: 20px;
+    }
+    .hero-title em {
+      font-style: italic;
+      color: var(--sage);
+    }
+
+    .hero-sub {
+      font-size: 1.05rem;
+      color: var(--text-mid);
+      line-height: 1.65;
+      font-weight: 300;
+      margin-bottom: 32px;
+      max-width: 400px;
+    }
+
+    .hero-cta-group {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 44px;
+    }
+
+    @media (min-width: 420px) {
+      .hero-cta-group { flex-direction: row; flex-wrap: wrap; }
+    }
+
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      background: var(--sage);
+      color: var(--white);
+      text-decoration: none;
+      font-size: 1rem;
+      font-weight: 500;
+      padding: 15px 28px;
+      border-radius: 100px;
+      transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
+      box-shadow: 0 4px 20px rgba(74,103,65,0.3);
+    }
+    .btn-primary:hover {
+      background: #3a5233;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 28px rgba(74,103,65,0.38);
+    }
+    .btn-primary svg { width: 18px; height: 18px; }
+
+    .btn-secondary {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      background: transparent;
+      color: var(--sage);
+      text-decoration: none;
+      font-size: 1rem;
+      font-weight: 500;
+      padding: 15px 24px;
+      border-radius: 100px;
+      border: 1.5px solid var(--sage);
+      transition: background 0.2s, transform 0.15s;
+    }
+    .btn-secondary:hover {
+      background: var(--sage-pale);
+      transform: translateY(-2px);
+    }
+
+    .hero-trust {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .trust-faces {
+      display: flex;
+      align-items: center;
+    }
+    .trust-face {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      border: 2px solid var(--cream);
+      overflow: hidden;
+      margin-left: -10px;
+      background: var(--sage-pale);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.9rem;
+    }
+    .trust-face:first-child { margin-left: 0; }
+
+    .trust-text {
+      font-size: 0.82rem;
+      color: var(--text-mid);
+      font-weight: 400;
+    }
+    .trust-text strong { color: var(--text-dark); font-weight: 500; }
+
+    /* ─── PROBLEM ────────────────────────────────── */
+    .section-problem {
+      padding: 52px 0;
+      background: var(--cream-deep);
+    }
+
+    .section-label {
+      font-size: 0.72rem;
+      font-weight: 500;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--text-light);
+      margin-bottom: 12px;
+    }
+
+    .section-title {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(1.55rem, 5.5vw, 2.2rem);
+      font-weight: 600;
+      line-height: 1.25;
+      color: var(--text-dark);
+      letter-spacing: -0.01em;
+      margin-bottom: 16px;
+    }
+    .section-title em { font-style: italic; color: var(--sage); }
+
+    .section-body {
+      font-size: 0.97rem;
+      color: var(--text-mid);
+      line-height: 1.7;
+      font-weight: 300;
+      margin-bottom: 28px;
+    }
+
+    .problem-cards {
+      display: grid;
+      gap: 12px;
+      margin-top: 28px;
+    }
+
+    .problem-card {
+      background: var(--white);
+      border-radius: var(--radius-md);
+      padding: 18px 20px;
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      box-shadow: var(--shadow-soft);
+    }
+
+    .problem-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.1rem;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+    .problem-icon.orange { background: #FDF0E6; }
+    .problem-icon.red    { background: #FDEAE8; }
+    .problem-icon.gray   { background: #F0EDE9; }
+
+    .problem-card-title {
+      font-size: 0.92rem;
+      font-weight: 500;
+      color: var(--text-dark);
+      margin-bottom: 4px;
+    }
+    .problem-card-text {
+      font-size: 0.83rem;
+      color: var(--text-mid);
+      line-height: 1.5;
+      font-weight: 300;
+    }
+
+    /* ─── HOW IT WORKS ───────────────────────────── */
+    .section-how {
+      padding: 56px 0;
+    }
+
+    .steps {
+      margin-top: 32px;
+      display: grid;
+      gap: 0;
+      position: relative;
+    }
+
+    .steps::before {
+      content: '';
+      position: absolute;
+      left: 19px;
+      top: 24px;
+      bottom: 24px;
+      width: 2px;
+      background: linear-gradient(to bottom, var(--sage-pale), var(--peach), var(--sage-pale));
+      border-radius: 2px;
+    }
+
+    .step {
+      display: flex;
+      gap: 20px;
+      padding: 0 0 32px 0;
+      position: relative;
+    }
+    .step:last-child { padding-bottom: 0; }
+
+    .step-num {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: var(--sage);
+      color: var(--white);
+      font-family: 'Playfair Display', serif;
+      font-size: 1rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      position: relative;
+      z-index: 1;
+      box-shadow: 0 0 0 4px var(--cream);
+    }
+
+    .step-body { padding-top: 8px; }
+    .step-title {
+      font-size: 1rem;
+      font-weight: 500;
+      color: var(--text-dark);
+      margin-bottom: 5px;
+    }
+    .step-text {
+      font-size: 0.88rem;
+      color: var(--text-mid);
+      line-height: 1.6;
+      font-weight: 300;
+    }
+
+    /* ─── PROCEDURES ─────────────────────────────── */
+    .section-procedures {
+      padding: 52px 0;
+      background: var(--cream-deep);
+    }
+
+    .procedure-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 28px;
+    }
+
+    @media (min-width: 480px) {
+      .procedure-grid { grid-template-columns: 1fr 1fr 1fr; }
+    }
+
+    @media (min-width: 768px) {
+      .procedure-grid { grid-template-columns: repeat(3, 1fr); gap: 14px; }
+    }
+
+    .proc-card {
+      background: var(--white);
+      border-radius: var(--radius-md);
+      padding: 18px 16px;
+      cursor: pointer;
+      border: 1.5px solid transparent;
+      transition: border-color 0.2s, box-shadow 0.2s, transform 0.2s;
+      text-align: center;
+      box-shadow: var(--shadow-soft);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .proc-card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, var(--sage-pale) 0%, transparent 100%);
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+
+    .proc-card:hover {
+      border-color: var(--sage);
+      transform: translateY(-3px);
+      box-shadow: var(--shadow-card);
+    }
+    .proc-card:hover::before { opacity: 0.4; }
+    .proc-card:active { transform: translateY(-1px) scale(0.98); }
+
+    @keyframes kit-highlight {
+      0%   { box-shadow: var(--shadow-soft); border-color: transparent; }
+      20%  { box-shadow: 0 0 0 4px rgba(74,103,65,0.25); border-color: var(--sage); }
+      80%  { box-shadow: 0 0 0 4px rgba(74,103,65,0.25); border-color: var(--sage); }
+      100% { box-shadow: var(--shadow-soft); border-color: transparent; }
+    }
+    .kit-card.is-highlighted { animation: kit-highlight 1.6s ease forwards; }
+
+    .proc-emoji {
+      font-size: 1.6rem;
+      margin-bottom: 8px;
+      display: block;
+      position: relative;
+      z-index: 1;
+    }
+    .proc-name {
+      font-size: 0.8rem;
+      font-weight: 500;
+      color: var(--text-dark);
+      line-height: 1.3;
+      position: relative;
+      z-index: 1;
+    }
+    .proc-count {
+      font-size: 0.72rem;
+      color: var(--sage);
+      font-weight: 400;
+      margin-top: 4px;
+      display: block;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* ─── PRODUCTS / KITS ────────────────────────── */
+    .section-kits {
+      padding: 56px 0;
+    }
+
+    .kits-subtitle {
+      font-size: 0.9rem;
+      color: var(--text-mid);
+      font-weight: 300;
+      margin-bottom: 28px;
+      margin-top: 10px;
+    }
+
+    .kit-card {
+      background: var(--white);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      box-shadow: var(--shadow-card);
+      margin-bottom: 16px;
+      border: 1px solid var(--cream-deep);
+      transition: transform 0.25s, box-shadow 0.25s;
+    }
+    .kit-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 16px 56px rgba(43,35,32,0.14);
+    }
+
+    .kit-header {
+      padding: 22px 22px 0;
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .kit-badge {
+      display: inline-block;
+      font-size: 0.7rem;
+      font-weight: 500;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      padding: 4px 10px;
+      border-radius: 100px;
+      margin-bottom: 10px;
+    }
+    .kit-badge.laser   { background: #FEF3E2; color: #B45309; }
+    .kit-badge.bio     { background: #E6F4EA; color: #2E7D32; }
+    .kit-badge.rf      { background: #EDE7F6; color: #5E35B1; }
+    .kit-badge.peeling { background: #FCE4EC; color: #C2185B; }
+
+    .kit-emoji {
+      font-size: 2.4rem;
+      line-height: 1;
+      flex-shrink: 0;
+    }
+
+    .kit-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.15rem;
+      font-weight: 600;
+      color: var(--text-dark);
+      line-height: 1.25;
+      margin-bottom: 6px;
+    }
+
+    .kit-desc {
+      font-size: 0.85rem;
+      color: var(--text-mid);
+      line-height: 1.55;
+      font-weight: 300;
+    }
+
+    .kit-body {
+      padding: 14px 22px 20px;
+    }
+
+    .kit-items {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin: 14px 0 18px;
+    }
+    .kit-item {
+      font-size: 0.76rem;
+      color: var(--sage);
+      background: var(--sage-pale);
+      padding: 4px 10px;
+      border-radius: 100px;
+      font-weight: 400;
+    }
+
+    .kit-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-top: 14px;
+      border-top: 1px solid var(--cream-deep);
+    }
+
+    .kit-price {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: var(--text-dark);
+    }
+    .kit-price-note {
+      font-size: 0.75rem;
+      color: var(--text-light);
+      font-weight: 300;
+      margin-top: 2px;
+    }
+
+    .kit-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--sage);
+      color: var(--white);
+      text-decoration: none;
+      font-size: 0.85rem;
+      font-weight: 500;
+      padding: 11px 20px;
+      border-radius: 100px;
+      border: none;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.15s;
+    }
+    .kit-btn:hover { background: #3a5233; transform: scale(1.03); }
+
+    /* ─── WHY POSTCARE ───────────────────────────── */
+    .section-why {
+      padding: 52px 0;
+      background: var(--sage);
+      color: var(--white);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .section-why::before {
+      content: '';
+      position: absolute;
+      top: -120px; right: -100px;
+      width: 360px; height: 360px;
+      background: rgba(255,255,255,0.05);
+      border-radius: 50%;
+    }
+
+    .section-why .section-label { color: rgba(255,255,255,0.5); }
+    .section-why .section-title { color: var(--white); }
+    .section-why .section-title em { color: var(--peach); }
+
+    .why-grid {
+      display: grid;
+      gap: 12px;
+      margin-top: 28px;
+    }
+
+    @media (min-width: 600px) {
+      .why-grid { grid-template-columns: 1fr 1fr; }
+    }
+
+    .why-card {
+      background: rgba(255,255,255,0.1);
+      border: 1px solid rgba(255,255,255,0.15);
+      border-radius: var(--radius-md);
+      padding: 20px;
+      backdrop-filter: blur(4px);
+      transition: background 0.2s, transform 0.2s;
+    }
+    .why-card:hover {
+      background: rgba(255,255,255,0.16);
+      transform: translateY(-2px);
+    }
+
+    .why-card-num {
+      font-family: 'Playfair Display', serif;
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--peach);
+      line-height: 1;
+      margin-bottom: 8px;
+    }
+    .why-card-title {
+      font-size: 0.95rem;
+      font-weight: 500;
+      color: var(--white);
+      margin-bottom: 6px;
+    }
+    .why-card-text {
+      font-size: 0.83rem;
+      color: rgba(255,255,255,0.65);
+      line-height: 1.55;
+      font-weight: 300;
+    }
+
+    /* ─── TESTIMONIALS ───────────────────────────── */
+    .section-reviews {
+      padding: 56px 0;
+    }
+
+    .reviews-scroll {
+      display: grid;
+      gap: 12px;
+      margin-top: 28px;
+    }
+
+    @media (min-width: 640px) {
+      .reviews-scroll { grid-template-columns: 1fr 1fr; }
+    }
+
+    .review-card {
+      background: var(--white);
+      border-radius: var(--radius-md);
+      padding: 20px;
+      box-shadow: var(--shadow-soft);
+      border: 1px solid var(--cream-deep);
+      position: relative;
+    }
+
+    .review-quote {
+      position: absolute;
+      top: 16px; right: 18px;
+      font-family: 'Playfair Display', serif;
+      font-size: 3rem;
+      line-height: 1;
+      color: var(--sage-pale);
+      font-weight: 700;
+    }
+
+    .review-stars {
+      color: var(--peach-deep);
+      font-size: 0.85rem;
+      letter-spacing: 1px;
+      margin-bottom: 10px;
+    }
+
+    .review-text {
+      font-size: 0.9rem;
+      color: var(--text-mid);
+      line-height: 1.65;
+      font-weight: 300;
+      font-style: italic;
+      margin-bottom: 14px;
+    }
+
+    .review-author {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .review-avatar {
+      width: 36px; height: 36px;
+      border-radius: 50%;
+      background: var(--sage-pale);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.9rem;
+      flex-shrink: 0;
+    }
+    .review-name {
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: var(--text-dark);
+    }
+    .review-proc {
+      font-size: 0.75rem;
+      color: var(--text-light);
+      font-weight: 300;
+    }
+
+    /* ─── TG BANNER ──────────────────────────────── */
+    .section-tg {
+      padding: 52px 0 60px;
+      background: var(--cream-deep);
+    }
+
+    .tg-card {
+      background: linear-gradient(135deg, #E8F4E6 0%, #F5EDE3 100%);
+      border-radius: var(--radius-xl);
+      padding: 36px 28px;
+      text-align: center;
+      border: 1px solid rgba(74,103,65,0.12);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .tg-card::before {
+      content: '';
+      position: absolute;
+      top: -60px; right: -60px;
+      width: 200px; height: 200px;
+      background: rgba(74,103,65,0.06);
+      border-radius: 50%;
+    }
+
+    .tg-icon {
+      width: 64px; height: 64px;
+      background: #229ED9;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 16px;
+      box-shadow: 0 8px 24px rgba(34,158,217,0.3);
+    }
+    .tg-icon svg { width: 34px; height: 34px; fill: white; }
+
+    .tg-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: var(--text-dark);
+      margin-bottom: 10px;
+      line-height: 1.25;
+    }
+    .tg-title em { font-style: italic; color: var(--sage); }
+
+    .tg-desc {
+      font-size: 0.92rem;
+      color: var(--text-mid);
+      line-height: 1.65;
+      font-weight: 300;
+      margin-bottom: 24px;
+      max-width: 340px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .tg-features {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-bottom: 28px;
+      text-align: left;
+      max-width: 300px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .tg-feature {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 0.87rem;
+      color: var(--text-mid);
+      font-weight: 300;
+    }
+    .tg-feature::before {
+      content: '';
+      width: 18px; height: 18px;
+      border-radius: 50%;
+      background: var(--sage);
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12' fill='none'%3E%3Cpath d='M2.5 6L5 8.5L9.5 4' stroke='white' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: center;
+      flex-shrink: 0;
+    }
+
+    .tg-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      background: #229ED9;
+      color: var(--white);
+      text-decoration: none;
+      font-size: 1rem;
+      font-weight: 500;
+      padding: 15px 32px;
+      border-radius: 100px;
+      transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
+      box-shadow: 0 4px 20px rgba(34,158,217,0.3);
+    }
+    .tg-btn:hover {
+      background: #1a8bbf;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 28px rgba(34,158,217,0.4);
+    }
+    .tg-btn svg { width: 20px; height: 20px; fill: white; }
+
+    .tg-sub {
+      font-size: 0.78rem;
+      color: var(--text-light);
+      margin-top: 12px;
+    }
+
+    /* ─── FAQ ────────────────────────────────────── */
+    .section-faq {
+      padding: 52px 0 60px;
+    }
+
+    .faq-list {
+      margin-top: 28px;
+      display: grid;
+      gap: 8px;
+    }
+
+    .faq-item {
+      background: var(--white);
+      border-radius: var(--radius-md);
+      border: 1px solid var(--cream-deep);
+      overflow: hidden;
+      transition: box-shadow 0.2s;
+    }
+    .faq-item:hover { box-shadow: var(--shadow-soft); }
+
+    .faq-q {
+      width: 100%;
+      background: none;
+      border: none;
+      text-align: left;
+      padding: 18px 20px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.95rem;
+      font-weight: 500;
+      color: var(--text-dark);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      line-height: 1.4;
+    }
+
+    .faq-icon {
+      width: 24px; height: 24px;
+      border-radius: 50%;
+      background: var(--sage-pale);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      transition: background 0.2s, transform 0.3s;
+    }
+    .faq-icon svg {
+      width: 12px; height: 12px;
+      stroke: var(--sage);
+      transition: transform 0.3s;
+    }
+
+    .faq-item.open .faq-icon {
+      background: var(--sage);
+      transform: rotate(180deg);
+    }
+    .faq-item.open .faq-icon svg { stroke: white; }
+
+    .faq-a {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.35s ease, padding 0.25s ease;
+      padding: 0 20px;
+    }
+    .faq-item.open .faq-a {
+      max-height: 300px;
+      padding: 0 20px 18px;
+    }
+    .faq-a-inner {
+      font-size: 0.88rem;
+      color: var(--text-mid);
+      line-height: 1.65;
+      font-weight: 300;
+      padding-top: 2px;
+      border-top: 1px solid var(--cream-deep);
+      padding-top: 14px;
+    }
+
+    /* ─── FOOTER ─────────────────────────────────── */
+    footer {
+      background: var(--text-dark);
+      color: rgba(255,255,255,0.5);
+      padding: 32px 0;
+      text-align: center;
+    }
+
+    .footer-logo {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: var(--white);
+      margin-bottom: 8px;
+    }
+    .footer-logo span { color: var(--peach); }
+
+    .footer-text {
+      font-size: 0.8rem;
+      line-height: 1.6;
+      margin-bottom: 16px;
+    }
+
+    .footer-links {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      flex-wrap: wrap;
+      margin-bottom: 16px;
+    }
+    .footer-links a {
+      color: rgba(255,255,255,0.45);
+      text-decoration: none;
+      font-size: 0.8rem;
+      transition: color 0.2s;
+    }
+    .footer-links a:hover { color: var(--white); }
+
+    .footer-copy {
+      font-size: 0.72rem;
+      color: rgba(255,255,255,0.25);
+    }
+
+    /* ─── SCROLL-TO-TOP ──────────────────────────── */
+    .scroll-top {
+      position: fixed;
+      bottom: 24px;
+      right: 20px;
+      width: 44px; height: 44px;
+      background: var(--sage);
+      color: var(--white);
+      border: none;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      box-shadow: 0 4px 16px rgba(74,103,65,0.35);
+      opacity: 0;
+      transform: translateY(12px);
+      transition: opacity 0.3s, transform 0.3s, background 0.2s;
+      z-index: 50;
+    }
+    .scroll-top.show { opacity: 1; transform: translateY(0); }
+    .scroll-top:hover { background: #3a5233; }
+    .scroll-top svg { width: 18px; height: 18px; stroke: white; }
+
+    /* ─── DESKTOP ENHANCEMENTS ───────────────────── */
+    @media (min-width: 768px) {
+      .hero { padding: 80px 0 72px; }
+      .hero-title { font-size: 3.2rem; }
+      .hero-sub { font-size: 1.1rem; max-width: 480px; }
+      .section-title { font-size: 2.2rem; }
+      .kit-card { display: grid; grid-template-columns: 1fr; }
+      .tg-card { padding: 48px 40px; }
+    }
+
+    @media (min-width: 1024px) {
+      .hero { padding: 100px 0 88px; }
+      .section-problem, .section-how, .section-procedures,
+      .section-kits, .section-why, .section-reviews,
+      .section-tg, .section-faq { padding: 72px 0; }
+    }
+
+    /* ─── KIT PRODUCTS (dynamic) ──────────────────── */
+    .kit-products { margin-bottom: 12px; }
+    .kit-product-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 7px 0;
+      border-bottom: 1px solid var(--cream-deep);
+      font-size: 13px;
+    }
+    .kit-product-row:last-child { border-bottom: none; }
+    .kit-product-name { flex: 1; color: var(--text-mid); line-height: 1.3; }
+    .kit-product-btns { display: flex; gap: 4px; flex-shrink: 0; }
+    .kit-buy-btn {
+      display: inline-block;
+      padding: 3px 9px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 600;
+      text-decoration: none;
+      white-space: nowrap;
+      transition: opacity .15s;
+    }
+    .kit-buy-btn:hover { opacity: .8; }
+    .kit-buy-btn.wb   { background: #cb1a34; color: #fff; }
+    .kit-buy-btn.ozon { background: #005bff; color: #fff; }
+  </style>
+
+<!-- Yandex.Metrika counter -->
+<script type="text/javascript">
+    (function(m,e,t,r,i,k,a){
+        m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
+        m[i].l=1*new Date();
+        for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}
+        k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)
+    })(window, document,'script','https://mc.yandex.ru/metrika/tag.js?id=109137299', 'ym');
+
+    ym(109137299, 'init', {clickmap:true, trackLinks:true, accurateTrackBounce:true});
+</script>
+<noscript><div><img src="https://mc.yandex.ru/watch/109137299" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
+<!-- /Yandex.Metrika counter -->
+
+</head>
+<body>
+
+<!-- ─── NAV ────────────────────────────────────────── -->
+<nav>
+  <div class="container">
+    <div class="nav-inner">
+      <a href="#" class="nav-logo">Post<span>Care</span></a>
+      <a href="https://t.me/nenaugad_bot" target="_blank" rel="noopener" class="nav-cta">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8l-1.69 7.96c-.13.58-.48.72-.96.45l-2.65-1.95-1.28 1.23c-.14.14-.26.26-.53.26l.19-2.7 4.87-4.4c.21-.19-.05-.29-.33-.1L7.84 14.6l-2.6-.81c-.57-.18-.58-.57.12-.84l10.15-3.91c.47-.17.88.12.73.76z"/></svg>
+        Подобрать набор
+      </a>
+    </div>
+  </div>
+</nav>
+
+<!-- ─── HERO ────────────────────────────────────────── -->
+<section class="hero">
+  <div class="hero-blob hero-blob-1"></div>
+  <div class="hero-blob hero-blob-2"></div>
+  <div class="container">
+    <div class="hero-content">
+      <div class="hero-eyebrow reveal">Составлено косметологами</div>
+      <h1 class="hero-title reveal reveal-delay-1">
+        Уход после процедуры — <em>без ошибок</em>
+      </h1>
+      <p class="hero-sub reveal reveal-delay-2">
+        Вы потратили на процедуру 15–35&nbsp;000&nbsp;₽. Мы подберём именно те средства, которые сохранят результат и ускорят восстановление.
+      </p>
+      <div class="hero-cta-group reveal reveal-delay-3">
+        <a href="#procedures" class="btn-primary">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 7H4a2 2 0 00-2 2v6a2 2 0 002 2h16a2 2 0 002-2V9a2 2 0 00-2-2z"/><path d="M16 21V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v16"/></svg>
+          Выбрать набор
+        </a>
+        <a href="https://t.me/nenaugad_bot" target="_blank" rel="noopener" class="btn-secondary">
+          Подобрать в Telegram
+        </a>
+      </div>
+      <div class="hero-trust reveal reveal-delay-4">
+        <div class="trust-faces">
+          <div class="trust-face">🧖</div>
+          <div class="trust-face">✨</div>
+          <div class="trust-face">💆</div>
+          <div class="trust-face">🌿</div>
+        </div>
+        <p class="trust-text"><strong>1 200+</strong> клиентов уже использовали наши наборы</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── PROBLEM ─────────────────────────────────────── -->
+<section class="section-problem" id="problem">
+  <div class="container">
+    <p class="section-label reveal">Знакомая ситуация?</p>
+    <h2 class="section-title reveal reveal-delay-1">После процедуры — <em>полный хаос</em></h2>
+    <p class="section-body reveal reveal-delay-2">
+      Косметолог дала список рекомендаций, но не объяснила где всё это купить. Вы гуглите — и находите только форумы с противоречивыми советами.
+    </p>
+
+    <div class="problem-cards">
+      <div class="problem-card reveal reveal-delay-1">
+        <div class="problem-icon orange">🔍</div>
+        <div>
+          <p class="problem-card-title">«Что использовать после лазера?»</p>
+          <p class="problem-card-text">Вы часами читаете форумы, получаете 10 противоречивых ответов и всё равно не знаете, что купить.</p>
+        </div>
+      </div>
+      <div class="problem-card reveal reveal-delay-2">
+        <div class="problem-icon red">⚠️</div>
+        <div>
+          <p class="problem-card-title">Страх испортить результат</p>
+          <p class="problem-card-text">Не та кислота, не тот SPF — и эффект процедуры за 30&nbsp;000&nbsp;₽ пропадёт через неделю.</p>
+        </div>
+      </div>
+      <div class="problem-card reveal reveal-delay-3">
+        <div class="problem-icon gray">🛍️</div>
+        <div>
+          <p class="problem-card-title">Покупаете «всё подряд»</p>
+          <p class="problem-card-text">Набираете случайную косметику, половина которой не подходит именно под вашу процедуру.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── HOW IT WORKS ─────────────────────────────────── -->
+<section class="section-how" id="how">
+  <div class="container">
+    <p class="section-label reveal">Как это работает</p>
+    <h2 class="section-title reveal reveal-delay-1">Три шага до <em>идеального</em> ухода</h2>
+
+    <div class="steps">
+      <div class="step reveal reveal-delay-1">
+        <div class="step-num">1</div>
+        <div class="step-body">
+          <p class="step-title">Выберите свою процедуру</p>
+          <p class="step-text">Лазер, биоревитализация, RF-лифтинг, пилинг — у каждой процедуры своя программа восстановления.</p>
+        </div>
+      </div>
+      <div class="step reveal reveal-delay-2">
+        <div class="step-num">2</div>
+        <div class="step-body">
+          <p class="step-title">Получите готовый набор</p>
+          <p class="step-text">Все средства подобраны косметологами специально под вашу процедуру — ничего лишнего, ничего вредного.</p>
+        </div>
+      </div>
+      <div class="step reveal reveal-delay-3">
+        <div class="step-num">3</div>
+        <div class="step-body">
+          <p class="step-title">Следуйте протоколу</p>
+          <p class="step-text">К каждому набору — пошаговый гайд по восстановлению. День за днём, без догадок и форумов.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── PROCEDURES ───────────────────────────────────── -->
+<section class="section-procedures" id="procedures">
+  <div class="container">
+    <p class="section-label reveal">Наборы по процедурам</p>
+    <h2 class="section-title reveal reveal-delay-1">После какой процедуры вам нужен уход?</h2>
+
+    <div class="procedure-grid">
+      <div class="proc-card reveal reveal-delay-1" onclick="pickProc('laser')">
+        <span class="proc-emoji">💫</span>
+        <p class="proc-name">Лазерная шлифовка</p>
+        <span class="proc-count">8 средств</span>
+      </div>
+      <div class="proc-card reveal reveal-delay-1" onclick="pickProc('biorevit')">
+        <span class="proc-emoji">💉</span>
+        <p class="proc-name">Биоревитализация</p>
+        <span class="proc-count">6 средств</span>
+      </div>
+      <div class="proc-card reveal reveal-delay-2" onclick="pickProc('rf')">
+        <span class="proc-emoji">⚡</span>
+        <p class="proc-name">RF-лифтинг</p>
+        <span class="proc-count">7 средств</span>
+      </div>
+      <div class="proc-card reveal reveal-delay-2" onclick="pickProc('piling')">
+        <span class="proc-emoji">🍑</span>
+        <p class="proc-name">Химический пилинг</p>
+        <span class="proc-count">9 средств</span>
+      </div>
+      <div class="proc-card reveal reveal-delay-3" onclick="pickProc('meso')">
+        <span class="proc-emoji">🔬</span>
+        <p class="proc-name">Мезотерапия</p>
+        <span class="proc-count">6 средств</span>
+      </div>
+      <div class="proc-card reveal reveal-delay-3" onclick="pickProc('mikro')">
+        <span class="proc-emoji">🌊</span>
+        <p class="proc-name">Микронидлинг</p>
+        <span class="proc-count">7 средств</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── KITS ─────────────────────────────────────────── -->
+<section class="section-kits" id="kits">
+  <div class="container">
+    <p class="section-label reveal">Популярные наборы</p>
+    <h2 class="section-title reveal reveal-delay-1">Готовые наборы от косметологов</h2>
+    <p class="kits-subtitle reveal reveal-delay-2">Подбираем под процедуру. Ничего лишнего.</p>
+
+    <!-- Kit 1 -->
+    <div class="kit-card reveal" data-procedure="laser">
+      <div class="kit-header">
+        <div>
+          <span class="kit-badge laser">После лазера</span>
+          <h3 class="kit-title">Восстановление после лазерной шлифовки</h3>
+          <p class="kit-desc">Полный протокол на 14 дней — от первых часов до окончания шелушения.</p>
+        </div>
+        <div class="kit-emoji">💫</div>
+      </div>
+      <div class="kit-body">
+        <div class="kit-items">
+          <span class="kit-item">Заживляющий крем</span>
+          <span class="kit-item">SPF 50+ физик.</span>
+          <span class="kit-item">Мягкий очиститель</span>
+          <span class="kit-item">Пантенол-спрей</span>
+          <span class="kit-item">Сыворотка с центеллой</span>
+        </div>
+        <div class="kit-footer">
+          <div>
+            <p class="kit-price">3 490 ₽</p>
+            <p class="kit-price-note">8 средств · гайд в подарок</p>
+          </div>
+          <a href="https://t.me/nenaugad_bot" target="_blank" rel="noopener" class="kit-btn">Подобрать →</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Kit 2 -->
+    <div class="kit-card reveal reveal-delay-1" data-procedure="biorevit">
+      <div class="kit-header">
+        <div>
+          <span class="kit-badge bio">После биоревита</span>
+          <h3 class="kit-title">Уход после биоревитализации</h3>
+          <p class="kit-desc">Сохраните эффект увлажнения и защитите кожу в первые 7 дней после инъекций.</p>
+        </div>
+        <div class="kit-emoji">💧</div>
+      </div>
+      <div class="kit-body">
+        <div class="kit-items">
+          <span class="kit-item">Успокаивающий тонер</span>
+          <span class="kit-item">Гиалуроновая сыворотка</span>
+          <span class="kit-item">Лёгкий SPF 50</span>
+          <span class="kit-item">Ферментный очиститель</span>
+        </div>
+        <div class="kit-footer">
+          <div>
+            <p class="kit-price">2 790 ₽</p>
+            <p class="kit-price-note">6 средств · гайд в подарок</p>
+          </div>
+          <a href="https://t.me/nenaugad_bot" target="_blank" rel="noopener" class="kit-btn">Подобрать →</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Kit 3 -->
+    <div class="kit-card reveal reveal-delay-2" data-procedure="rf">
+      <div class="kit-header">
+        <div>
+          <span class="kit-badge rf">После RF-лифтинга</span>
+          <h3 class="kit-title">Восстановление после RF-лифтинга</h3>
+          <p class="kit-desc">Поддержите синтез коллагена и снимите отёчность после аппаратной процедуры.</p>
+        </div>
+        <div class="kit-emoji">⚡</div>
+      </div>
+      <div class="kit-body">
+        <div class="kit-items">
+          <span class="kit-item">Антиоксидантный крем</span>
+          <span class="kit-item">Лимфодренажная маска</span>
+          <span class="kit-item">SPF 50+ тонирующий</span>
+          <span class="kit-item">Пептидная сыворотка</span>
+          <span class="kit-item">Охлаждающий гель</span>
+        </div>
+        <div class="kit-footer">
+          <div>
+            <p class="kit-price">3 190 ₽</p>
+            <p class="kit-price-note">7 средств · гайд в подарок</p>
+          </div>
+          <a href="https://t.me/nenaugad_bot" target="_blank" rel="noopener" class="kit-btn">Подобрать →</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── WHY POSTCARE ──────────────────────────────────── -->
+<section class="section-why">
+  <div class="container">
+    <p class="section-label reveal">Почему PostCare</p>
+    <h2 class="section-title reveal reveal-delay-1">Мы делаем одно — <em>очень хорошо</em></h2>
+
+    <div class="why-grid">
+      <div class="why-card reveal reveal-delay-1">
+        <p class="why-card-num">01</p>
+        <p class="why-card-title">Подобрано под процедуру</p>
+        <p class="why-card-text">Каждый набор — результат работы с косметологами. Не общий «уход для лица», а конкретный протокол.</p>
+      </div>
+      <div class="why-card reveal reveal-delay-2">
+        <p class="why-card-num">02</p>
+        <p class="why-card-title">Никакой несовместимости</p>
+        <p class="why-card-text">Все средства в наборе проверены на совместимость. Никаких кислот, когда они запрещены.</p>
+      </div>
+      <div class="why-card reveal reveal-delay-3">
+        <p class="why-card-num">03</p>
+        <p class="why-card-title">Гайд по восстановлению</p>
+        <p class="why-card-text">С каждым набором — пошаговая инструкция: что и когда наносить, что нельзя, когда вводить активы.</p>
+      </div>
+      <div class="why-card reveal reveal-delay-4">
+        <p class="why-card-num">04</p>
+        <p class="why-card-title">Канал с экспертами</p>
+        <p class="why-card-text">Telegram-канал с ответами косметологов, протоколами и разборами — бесплатно для всех подписчиков.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── REVIEWS ───────────────────────────────────────── -->
+<section class="section-reviews" id="reviews">
+  <div class="container">
+    <p class="section-label reveal">Отзывы</p>
+    <h2 class="section-title reveal reveal-delay-1">Что говорят наши клиенты</h2>
+
+    <div class="reviews-scroll">
+      <div class="review-card reveal reveal-delay-1">
+        <span class="review-quote">"</span>
+        <div class="review-stars">★★★★★</div>
+        <p class="review-text">После лазерной шлифовки была в панике — не знала что использовать. Набор PostCare спас ситуацию. Восстановление прошло быстро, без осложнений.</p>
+        <div class="review-author">
+          <div class="review-avatar">🌿</div>
+          <div>
+            <p class="review-name">Анна К.</p>
+            <p class="review-proc">После лазера CO₂</p>
+          </div>
+        </div>
+      </div>
+      <div class="review-card reveal reveal-delay-2">
+        <span class="review-quote">"</span>
+        <div class="review-stars">★★★★★</div>
+        <p class="review-text">Биоревитализацию делаю раз в квартал. Раньше тратила кучу времени на поиск подходящих средств. Теперь беру набор — всё есть, гайд понятный.</p>
+        <div class="review-author">
+          <div class="review-avatar">✨</div>
+          <div>
+            <p class="review-name">Елена М.</p>
+            <p class="review-proc">После биоревитализации</p>
+          </div>
+        </div>
+      </div>
+      <div class="review-card reveal reveal-delay-3">
+        <span class="review-quote">"</span>
+        <div class="review-stars">★★★★★</div>
+        <p class="review-text">RF-лифтинг прошла впервые. Не знала что ожидать. Набор + гайд — всё чётко по дням. Результат держится уже третий месяц.</p>
+        <div class="review-author">
+          <div class="review-avatar">💫</div>
+          <div>
+            <p class="review-name">Марина Г.</p>
+            <p class="review-proc">После RF-лифтинга</p>
+          </div>
+        </div>
+      </div>
+      <div class="review-card reveal reveal-delay-4">
+        <span class="review-quote">"</span>
+        <div class="review-stars">★★★★★</div>
+        <p class="review-text">Химический пилинг ТСА — страшно было что-то не то нанести. PostCare — это как персональный косметолог дома. Рекомендую всем.</p>
+        <div class="review-author">
+          <div class="review-avatar">🍑</div>
+          <div>
+            <p class="review-name">Ольга С.</p>
+            <p class="review-proc">После пилинга ТСА</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── TG BANNER ─────────────────────────────────────── -->
+<section class="section-tg" id="telegram">
+  <div class="container">
+    <div class="tg-card reveal">
+      <div class="tg-icon">
+        <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8l-1.69 7.96c-.13.58-.48.72-.96.45l-2.65-1.95-1.28 1.23c-.14.14-.26.26-.53.26l.19-2.7 4.87-4.4c.21-.19-.05-.29-.33-.1L7.84 14.6l-2.6-.81c-.57-.18-.58-.57.12-.84l10.15-3.91c.47-.17.88.12.73.76z"/></svg>
+      </div>
+      <h2 class="tg-title">Подберите набор за 2 минуты — <em>@nenaugad_bot</em></h2>
+      <p class="tg-desc">
+        Скажите боту какую процедуру делали — он подберёт конкретные средства и пришлёт пошаговый протокол восстановления.
+      </p>
+      <div class="tg-features">
+        <div class="tg-feature">Подбор под вашу процедуру и день восстановления</div>
+        <div class="tg-feature">Протоколы после 9 видов процедур</div>
+        <div class="tg-feature">Ссылки на WB и Ozon с актуальными ценами</div>
+        <div class="tg-feature">Бесплатно, без регистрации</div>
+      </div>
+      <a href="https://t.me/nenaugad_bot" target="_blank" rel="noopener" class="tg-btn">
+        <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8l-1.69 7.96c-.13.58-.48.72-.96.45l-2.65-1.95-1.28 1.23c-.14.14-.26.26-.53.26l.19-2.7 4.87-4.4c.21-.19-.05-.29-.33-.1L7.84 14.6l-2.6-.81c-.57-.18-.58-.57.12-.84l10.15-3.91c.47-.17.88.12.73.76z"/></svg>
+        Открыть бота
+      </a>
+      <p class="tg-sub">Бесплатный подбор — сразу в Telegram</p>
+    </div>
+  </div>
+</section>
+
+<!-- ─── FAQ ───────────────────────────────────────────── -->
+<section class="section-faq" id="faq">
+  <div class="container">
+    <p class="section-label reveal">Вопросы и ответы</p>
+    <h2 class="section-title reveal reveal-delay-1">Часто спрашивают</h2>
+
+    <div class="faq-list reveal reveal-delay-2">
+      <div class="faq-item">
+        <button class="faq-q" aria-expanded="false">
+          Можно ли использовать набор после любой процедуры?
+          <span class="faq-icon">
+            <svg viewBox="0 0 12 12" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 4l4 4 4-4"/></svg>
+          </span>
+        </button>
+        <div class="faq-a">
+          <div class="faq-a-inner">
+            Нет — и это принципиально. Каждый набор создан под конкретную процедуру. Средства после лазера и после биоревитализации принципиально отличаются. Именно поэтому мы не продаём «универсальный уход для лица» — это бессмысленно.
+          </div>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q" aria-expanded="false">
+          Что входит в гайд по восстановлению?
+          <span class="faq-icon">
+            <svg viewBox="0 0 12 12" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 4l4 4 4-4"/></svg>
+          </span>
+        </button>
+        <div class="faq-a">
+          <div class="faq-a-inner">
+            Пошаговый протокол по дням: что и в какой последовательности наносить, через сколько дней вводить SPF, когда можно вернуться к кислотам. Плюс список того, что категорически нельзя в период восстановления.
+          </div>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q" aria-expanded="false">
+          Можно ли добавить свои любимые средства к набору?
+          <span class="faq-icon">
+            <svg viewBox="0 0 12 12" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 4l4 4 4-4"/></svg>
+          </span>
+        </button>
+        <div class="faq-a">
+          <div class="faq-a-inner">
+            Зависит от средства и процедуры. В Telegram-канале мы разбираем конкретные составы и отвечаем на вопросы «можно ли я+X». Подписывайтесь — там всегда можно спросить напрямую.
+          </div>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q" aria-expanded="false">
+          У меня чувствительная кожа — подойдёт ли набор?
+          <span class="faq-icon">
+            <svg viewBox="0 0 12 12" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 4l4 4 4-4"/></svg>
+          </span>
+        </button>
+        <div class="faq-a">
+          <div class="faq-a-inner">
+            Все наборы изначально составлены с расчётом на кожу в стрессовом состоянии после процедуры — без агрессивных компонентов, без отдушек, с минимальным составом. Если есть конкретные аллергии — напишите в канале, поможем подобрать альтернативы.
+          </div>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q" aria-expanded="false">
+          Как долго ждать доставку?
+          <span class="faq-icon">
+            <svg viewBox="0 0 12 12" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 4l4 4 4-4"/></svg>
+          </span>
+        </button>
+        <div class="faq-a">
+          <div class="faq-a-inner">
+            Москва и Петербург — 1–2 дня. Регионы — 3–7 дней через СДЭК и Почту России. Если процедура завтра — напишите в канале, поможем подобрать средства из ближайшей аптеки на период ожидания.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── FOOTER ──────────────────────────────────────────── -->
+<footer>
+  <div class="container">
+    <p class="footer-logo">Post<span>Care</span></p>
+    <p class="footer-text">
+      Правильный уход после косметологических процедур.<br>
+      Составлено косметологами, проверено на практике.
+    </p>
+    <div class="footer-links">
+      <a href="#procedures">Наборы</a>
+      <a href="#faq">FAQ</a>
+      <a href="https://t.me/posleprocedur" target="_blank" rel="noopener">Telegram-канал</a>
+    </div>
+    <p class="footer-copy">© 2026 PostCare. Информация на сайте носит образовательный характер.</p>
+  </div>
+</footer>
+
+<!-- ─── SCROLL TO TOP ──────────────────────────────────── -->
+<button class="scroll-top" id="scrollTop" aria-label="Наверх">
+  <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 15l-6-6-6 6"/></svg>
+</button>
+
+<script>
+  // ─── Reveal on scroll
+  const reveals = document.querySelectorAll('.reveal');
+  const revealObs = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('visible');
+        revealObs.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+  reveals.forEach(el => revealObs.observe(el));
+
+  // ─── Trigger hero immediately
+  document.querySelectorAll('.hero .reveal').forEach((el, i) => {
+    setTimeout(() => el.classList.add('visible'), i * 120);
+  });
+
+  // ─── FAQ accordion
+  document.querySelectorAll('.faq-q').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const item = btn.closest('.faq-item');
+      const isOpen = item.classList.contains('open');
+      document.querySelectorAll('.faq-item.open').forEach(i => i.classList.remove('open'));
+      if (!isOpen) item.classList.add('open');
+      btn.setAttribute('aria-expanded', !isOpen);
+    });
+  });
+
+  // ─── Scroll to top
+  const scrollBtn = document.getElementById('scrollTop');
+  window.addEventListener('scroll', () => {
+    scrollBtn.classList.toggle('show', window.scrollY > 400);
+  });
+  scrollBtn.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+
+  // ─── Inject affiliate product links into kit cards
+  (async () => {
+    try {
+      const res = await fetch('https://posleprocedur.extra.moscow/api/products');
+      if (!res.ok) return;
+      const data = await res.json();
+
+      document.querySelectorAll('.kit-card[data-procedure]').forEach(card => {
+        const code = card.dataset.procedure;
+        const proc = data[code];
+        if (!proc) return;
+
+        // Collect products with at least one link (acute phase first, then recovery)
+        const linked = [];
+        ['acute', 'recovery'].forEach(phase => {
+          if (!proc[phase]) return;
+          proc[phase].steps.forEach(step => {
+            step.products.forEach(p => {
+              if ((p.wb_url || p.ozon_url) && linked.length < 5) {
+                linked.push(p);
+              }
+            });
+          });
+        });
+
+        if (!linked.length) return;
+
+        // Replace static kit-items with real product rows
+        const itemsEl = card.querySelector('.kit-items');
+        if (!itemsEl) return;
+
+        const container = document.createElement('div');
+        container.className = 'kit-products';
+
+        linked.forEach(p => {
+          const row = document.createElement('div');
+          row.className = 'kit-product-row';
+
+          const name = document.createElement('span');
+          name.className = 'kit-product-name';
+          name.textContent = p.name;
+
+          const btns = document.createElement('div');
+          btns.className = 'kit-product-btns';
+
+          if (p.wb_url) {
+            const a = document.createElement('a');
+            a.href = addUtm(p.wb_url, code, 'wb', p.name);
+            a.target = '_blank';
+            a.rel = 'noopener';
+            a.className = 'kit-buy-btn wb';
+            a.textContent = 'WB';
+            a.addEventListener('click', () => track('click_wb', code, p.name));
+            btns.appendChild(a);
+          }
+          if (p.ozon_url) {
+            const a = document.createElement('a');
+            a.href = addUtm(p.ozon_url, code, 'ozon', p.name);
+            a.target = '_blank';
+            a.rel = 'noopener';
+            a.className = 'kit-buy-btn ozon';
+            a.textContent = 'Ozon';
+            a.addEventListener('click', () => track('click_ozon', code, p.name));
+            btns.appendChild(a);
+          }
+
+          row.appendChild(name);
+          row.appendChild(btns);
+          container.appendChild(row);
+        });
+
+        itemsEl.replaceWith(container);
+      });
+    } catch (e) { /* тихо, если API недоступен */ }
+  })();
+
+  // ─── Smooth anchor scroll
+  document.querySelectorAll('a[href^="#"]').forEach(a => {
+    a.addEventListener('click', e => {
+      const target = document.querySelector(a.getAttribute('href'));
+      if (target) {
+        e.preventDefault();
+        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    });
+  });
+</script>
+
+<script>
+  // ─── Analytics helpers ───────────────────────────────────
+  function track(goal, proc, label) {
+    if (typeof ym !== 'undefined') {
+      ym(109137299, 'reachGoal', goal, { proc: proc, label: label });
+    }
+    console.log('[track]', goal, proc, label);
+  }
+
+  function addUtm(url, proc, marketplace, productName) {
+    try {
+      const u = new URL(url);
+      u.searchParams.set('utm_source',   'postcare');
+      u.searchParams.set('utm_medium',   marketplace);
+      u.searchParams.set('utm_campaign', proc);
+      u.searchParams.set('utm_content',  productName.replace(/\s+/g, '_').slice(0, 40));
+      return u.toString();
+    } catch {
+      return url;
+    }
+  }
+
+  function pickProc(proc) {
+    track('click_proc', proc, proc);
+    const kit = document.querySelector('.kit-card[data-procedure="' + proc + '"]');
+    if (kit) {
+      kit.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      kit.classList.remove('is-highlighted');
+      void kit.offsetWidth;
+      kit.classList.add('is-highlighted');
+      kit.addEventListener('animationend', () => kit.classList.remove('is-highlighted'), { once: true });
+    } else {
+      track('click_bot', proc, 'no_kit');
+      window.open('https://t.me/nenaugad_bot', '_blank');
+    }
+  }
+
+  // Track all bot CTA clicks
+  document.querySelectorAll('a[href*="nenaugad_bot"]').forEach(a => {
+    a.addEventListener('click', () => track('click_bot', 'cta', a.className));
+  });
+</script>
+</body>
+</html>
