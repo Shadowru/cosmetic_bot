@@ -169,6 +169,12 @@ Per-procedure «Норма или тревога после X» (по совет
 ### Чёрный список шаблонов
 В `shorts_generator.TEMPLATE_BLACKLIST` — шаблоны исключённые из авто-подбора по данным retention. Сейчас там `first_time` (3 видео, avg 227 просмотров, AVD 19.4%). `content_plan.TEMPLATES` фильтрует через этот список.
 
+### Только один systemd-юнит для бота
+В `/etc/systemd/system/` может оставаться **только один** unit, запускающий `bot.py`. 28.05 нашли дубль: помимо нового `posleprocedur-bot.service` был старый `postprocedure-bot.service` (с другим написанием), оставшийся от прошлой настройки. После ребута оба стартовали, → Telegram `Conflict 409: terminated by other getUpdates request` (нельзя долго polling-ить одним токеном из двух процессов). Авто-публикация продолжала работать, но команды боту иногда уходили не в тот инстанс. Каноничный файл лежит в `post_procedure/posleprocedur-bot.service` — установка: `sudo cp post_procedure/posleprocedur-bot.service /etc/systemd/system/ && sudo systemctl daemon-reload && sudo systemctl enable --now posleprocedur-bot`. Перед установкой: `systemctl list-unit-files | grep -i bot` — убедиться что других нет.
+
+### Downtime 28.05 (kernel update + 11h hosting outage)
+Между 01:15 и 12:13 UTC сервер был off. Маркер `-- Boot ... --` в `journalctl --list-boots`, ядро сменилось `5.15.0-176` → `5.15.0-179`. Скорее всего хостер делал обслуживание узла + накатил kernel patch. Systemd `Restart=always` сработал штатно при возврате — бот поднялся через 14s после загрузки сети. Из-за дубль-юнита (см. выше) первый старт упал с `httpx.ConnectError: All connection attempts failed` (сеть ещё поднималась), второй уже прошёл. Урок: при downtime > 5min проверить `journalctl --list-boots` — был ли ребут.
+
 ---
 
 ## Ключевые данные по рынку (актуально май 2026)

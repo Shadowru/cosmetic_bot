@@ -1,0 +1,25 @@
+[Unit]
+Description=Post-Procedure Telegram content bot
+Documentation=https://github.com/Shadowru/cosmetic_bot
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=zenith
+Group=zenith
+WorkingDirectory=/home/zenith/cosmetic/post_procedure
+EnvironmentFile=/home/zenith/cosmetic/post_procedure/.env
+ExecStart=/usr/bin/python3 /home/zenith/cosmetic/post_procedure/bot.py
+Restart=always
+RestartSec=10
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=posleprocedur-bot
+
+# Hardening (мягко — не ломаем существующее)
+NoNewPrivileges=true
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target
