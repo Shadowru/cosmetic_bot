@@ -172,6 +172,11 @@ Per-procedure «Норма или тревога после X» (по совет
 ### Только один systemd-юнит для бота
 В `/etc/systemd/system/` может оставаться **только один** unit, запускающий `bot.py`. 28.05 нашли дубль: помимо нового `posleprocedur-bot.service` был старый `postprocedure-bot.service` (с другим написанием), оставшийся от прошлой настройки. После ребута оба стартовали, → Telegram `Conflict 409: terminated by other getUpdates request` (нельзя долго polling-ить одним токеном из двух процессов). Авто-публикация продолжала работать, но команды боту иногда уходили не в тот инстанс. Каноничный файл лежит в `post_procedure/posleprocedur-bot.service` — установка: `sudo cp post_procedure/posleprocedur-bot.service /etc/systemd/system/ && sudo systemctl daemon-reload && sudo systemctl enable --now posleprocedur-bot`. Перед установкой: `systemctl list-unit-files | grep -i bot` — убедиться что других нет.
 
+### Silero TTS: пустые/неговорящие предложения → ValueError
+Silero внутри `process_simple_text()` выкидывает **bare `ValueError`** (без сообщения) если после собственной очистки текст оказался пустым — например, предложение состоит только из пунктуации/эмодзи/символов без букв. 28.05 на этом упал слот: 3 сегмента сгенерились, 4-й (видимо block3 или cta) содержал что-то вроде «→» или «...» — весь шорт потерян.
+
+В `_synth_sentences()`: (1) фильтруем предложения через regex `[A-Za-zА-Яа-яЁё]` — оставляем только те где есть хоть одна буква; (2) каждый вызов `apply_tts` обёрнут в try/except — если Silero всё-таки чохнул на каком-то предложении, скипаем его с warn-логом и идём дальше. Если **все** предложения попали под фильтр — возвращаем 0.25s тишины (чтобы видео хоть как-то собралось, а не упало через `_build_video`).
+
 ### Downtime 28.05 (kernel update + 11h hosting outage)
 Между 01:15 и 12:13 UTC сервер был off. Маркер `-- Boot ... --` в `journalctl --list-boots`, ядро сменилось `5.15.0-176` → `5.15.0-179`. Скорее всего хостер делал обслуживание узла + накатил kernel patch. Systemd `Restart=always` сработал штатно при возврате — бот поднялся через 14s после загрузки сети. Из-за дубль-юнита (см. выше) первый старт упал с `httpx.ConnectError: All connection attempts failed` (сеть ещё поднималась), второй уже прошёл. Урок: при downtime > 5min проверить `journalctl --list-boots` — был ли ребут.
 

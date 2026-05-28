@@ -476,21 +476,31 @@ def _get_silero() -> object:
 
 def _synth_sentences(model, text: str) -> np.ndarray:
     """Synthesize sentence-by-sentence to avoid Silero's internal chunking artifacts."""
-    # Split on sentence-ending punctuation
     sentences = [s.strip() for s in re.split(r'(?<=[.!?])\s+', text.strip()) if s.strip()]
     if not sentences:
         sentences = [text.strip()]
 
-    pause_short  = np.zeros(int(SILERO_RATE * 0.12), dtype=np.float32)  # between sentences
+    # Silero падает с bare ValueError если после внутренней очистки строка пустая
+    # (только пунктуация/символы/эмодзи). Фильтруем кандидаты на «без букв».
+    sentences = [s for s in sentences if re.search(r'[A-Za-zА-Яа-яЁё]', s)]
+    if not sentences:
+        logger.warning("TTS skipped: no speakable sentences in text=%r", text[:120])
+        return np.zeros(SILERO_RATE // 4, dtype=np.float32)
+
+    pause_short = np.zeros(int(SILERO_RATE * 0.12), dtype=np.float32)
     chunks = []
     for i, sentence in enumerate(sentences):
-        audio = model.apply_tts(
-            text=sentence,
-            speaker=SILERO_SPEAKER,
-            sample_rate=SILERO_RATE,
-            put_accent=True,
-            put_yo=True,
-        )
+        try:
+            audio = model.apply_tts(
+                text=sentence,
+                speaker=SILERO_SPEAKER,
+                sample_rate=SILERO_RATE,
+                put_accent=True,
+                put_yo=True,
+            )
+        except (ValueError, Exception) as e:
+            logger.warning("Silero apply_tts failed on sentence %r: %s — skipping", sentence[:80], e)
+            continue
         chunks.append(audio.numpy())
         if i < len(sentences) - 1:
             chunks.append(pause_short)
