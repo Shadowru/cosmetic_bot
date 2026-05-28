@@ -6,6 +6,7 @@ from pathlib import Path
 
 import generator as g
 import shorts_generator as sg
+from config import atomic_write_json
 
 BASE_DIR  = Path(__file__).parent
 PLAN_FILE = BASE_DIR / "content_plan.json"
@@ -28,7 +29,7 @@ def load_plan() -> dict:
 
 
 def save_plan(plan: dict) -> None:
-    PLAN_FILE.write_text(json.dumps(plan, ensure_ascii=False, indent=2), encoding="utf-8")
+    atomic_write_json(PLAN_FILE, plan)
 
 
 def _month_key(year: int, month: int) -> str:

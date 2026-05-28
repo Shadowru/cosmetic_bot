@@ -18,8 +18,7 @@ BASE_DIR       = Path(__file__).parent
 ANALYTICS_FILE = BASE_DIR / "analytics.json"
 QUEUE_FILE     = BASE_DIR / "content_queue.json"
 
-OLLAMA_URL = "http://localhost:11434/api/chat"
-MODEL      = os.environ.get("OLLAMA_MODEL", "qwen2.5:14b")
+from config import OLLAMA_URL, OLLAMA_MODEL as MODEL, atomic_write_json
 
 SCOPES = [
     "https://www.googleapis.com/auth/youtube.force-ssl",
@@ -62,7 +61,7 @@ def _load() -> dict:
 
 def _save(data: dict):
     data["updated_at"] = datetime.datetime.utcnow().isoformat()
-    ANALYTICS_FILE.write_text(json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8")
+    atomic_write_json(ANALYTICS_FILE, data)
 
 
 def _queue_index() -> dict:

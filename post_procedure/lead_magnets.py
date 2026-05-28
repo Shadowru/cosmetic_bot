@@ -20,8 +20,7 @@ logger = logging.getLogger(__name__)
 BASE_DIR    = Path(__file__).parent
 MAGNETS_FILE = BASE_DIR / "lead_magnets.json"
 
-OLLAMA_URL = "http://localhost:11434/api/chat"
-MODEL      = os.environ.get("OLLAMA_MODEL", "qwen2.5:14b")
+from config import OLLAMA_URL, OLLAMA_MODEL as MODEL, atomic_write_json
 
 # 7 ключевых процедур + читаемые названия для подачи зрителю
 PROCEDURES = {
@@ -97,7 +96,7 @@ def generate_all() -> dict:
             "text":      _generate_one(proc_id, proc_name),
         }
         # Save incrementally — long generation, don't lose progress on crash
-        MAGNETS_FILE.write_text(json.dumps(existing, ensure_ascii=False, indent=2), encoding="utf-8")
+        atomic_write_json(MAGNETS_FILE, existing)
     return existing
 
 
@@ -111,7 +110,7 @@ def regenerate(procedure_id: str) -> str:
     proc_name = PROCEDURES[procedure_id]
     text = _generate_one(procedure_id, proc_name)
     data[procedure_id] = {"procedure": procedure_id, "name": proc_name, "text": text}
-    MAGNETS_FILE.write_text(json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8")
+    atomic_write_json(MAGNETS_FILE, data)
     return text
 
 

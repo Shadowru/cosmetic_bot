@@ -105,6 +105,6 @@ def validate_norm_alarm(script: dict, procedure_nom: str) -> tuple[bool, str]:
         body = ""
         if 'resp' in locals():
             try: body = f" body={resp.text[:200]}"
-            except: pass
+            except Exception: pass  # fallback diagnostic; resp may not have .text
         logger.warning("validate_norm_alarm: API error (%s)%s — accepting by default", e, body)
         return True, f"validator error: {e}"

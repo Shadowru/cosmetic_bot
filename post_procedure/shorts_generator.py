@@ -25,8 +25,13 @@ MUSIC_DIR   = BASE_DIR / "music"
 SHORTS_DIR.mkdir(exist_ok=True)
 MUSIC_DIR.mkdir(exist_ok=True)
 
-OLLAMA_URL = "http://localhost:11434/api/chat"
-MODEL      = os.environ.get("OLLAMA_MODEL", "qwen2.5:14b")
+from config import (
+    OLLAMA_URL,
+    OLLAMA_MODEL as MODEL,
+    MIN_FRESH_COMBOS,
+    MIN_AVG_AVD_PCT,
+    AVD_WINDOW,
+)
 
 FONT_BOLD   = "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf"
 FONT_NORMAL = "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf"
@@ -1097,7 +1102,7 @@ def should_skip_slot() -> tuple[bool, str]:
             continue
         all_combos.append(("general", t))
     fresh = [c for c in all_combos if c not in used]
-    if len(fresh) < 5:
+    if len(fresh) < MIN_FRESH_COMBOS:
         return True, f"осталось {len(fresh)} свежих комбо (растягиваем)"
 
     # AVD signal
@@ -1110,11 +1115,14 @@ def should_skip_slot() -> tuple[bool, str]:
                 if v.get("is_short") and v.get("avg_view_pct") is not None
             ]
             shorts.sort(key=lambda v: v.get("published_at", ""), reverse=True)
-            last_n = shorts[:10]
-            if len(last_n) >= 5:
+            last_n = shorts[:AVD_WINDOW]
+            if len(last_n) >= MIN_FRESH_COMBOS:
                 avg_avd = sum(v["avg_view_pct"] for v in last_n) / len(last_n)
-                if avg_avd < 22.0:
-                    return True, f"avg AVD последних {len(last_n)} = {avg_avd:.1f}% (<22%)"
+                if avg_avd < MIN_AVG_AVD_PCT:
+                    return True, (
+                        f"avg AVD последних {len(last_n)} = {avg_avd:.1f}% "
+                        f"(<{MIN_AVG_AVD_PCT:.0f}%)"
+                    )
     except Exception as e:
         logger.warning("should_skip_slot: ошибка чтения analytics — %s", e)
 

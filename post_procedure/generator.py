@@ -10,8 +10,7 @@ logger = logging.getLogger(__name__)
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 QUEUE_FILE = os.path.join(BASE_DIR, "content_queue.json")
-OLLAMA_URL = "http://localhost:11434/api/chat"
-MODEL = os.environ.get("OLLAMA_MODEL", "qwen2.5:14b")
+from config import OLLAMA_URL, OLLAMA_MODEL as MODEL, atomic_write_json
 
 PROCEDURES = ["laser", "biorevit", "piling", "rf", "dermaroller", "chistka",
               "meso", "botox", "fillers", "plazma", "photo", "smas", "general"]
@@ -98,8 +97,7 @@ def load_queue() -> list:
 
 
 def save_queue(items: list) -> None:
-    with open(QUEUE_FILE, "w", encoding="utf-8") as f:
-        json.dump(items, f, ensure_ascii=False, indent=2)
+    atomic_write_json(QUEUE_FILE, items)
 
 
 def _next_procedure() -> str:

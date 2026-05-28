@@ -15,8 +15,10 @@ import content_plan
 import yt_stats
 import yt_research
 import lead_magnets
+import config
+from config import atomic_write_json
 
-logging.basicConfig(format="%(asctime)s - %(levelname)s - %(message)s", level=logging.INFO)
+config.setup_logging()
 logger = logging.getLogger(__name__)
 
 from pathlib import Path
@@ -47,8 +49,7 @@ def load_state() -> dict:
 
 
 def save_state(state: dict) -> None:
-    with open(STATE_FILE, "w", encoding="utf-8") as f:
-        json.dump(state, f)
+    atomic_write_json(STATE_FILE, state, indent=None)
 
 
 def load_products() -> dict:
@@ -603,8 +604,8 @@ async def _auto_publish_job(context: ContextTypes.DEFAULT_TYPE) -> None:
         if OWNER_ID:
             try:
                 await context.bot.send_message(chat_id=OWNER_ID, text=f"⚠️ Авто-публикация: {type(e).__name__}: {e}")
-            except Exception:
-                pass
+            except Exception as notify_err:
+                logger.warning("failed to notify owner about auto-publish error: %s", notify_err)
 
 
 async def cmd_autopublish(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -633,8 +634,8 @@ async def daily_generate(context: ContextTypes.DEFAULT_TYPE) -> None:
         if OWNER_ID:
             try:
                 await context.bot.send_message(chat_id=OWNER_ID, text=f"⚠️ Ошибка генерации: {e}")
-            except Exception:
-                pass
+            except Exception as notify_err:
+                logger.warning("failed to notify owner about generation error: %s", notify_err)
 
 
 async def cmd_queue(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:

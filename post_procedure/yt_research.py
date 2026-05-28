@@ -21,8 +21,7 @@ RESEARCH_FILE  = BASE_DIR / "research_cache.json"
 AUDIO_DIR      = BASE_DIR / "research_audio"
 AUDIO_DIR.mkdir(exist_ok=True)
 
-OLLAMA_URL = "http://localhost:11434/api/chat"
-MODEL      = os.environ.get("OLLAMA_MODEL", "qwen2.5:14b")
+from config import OLLAMA_URL, OLLAMA_MODEL as MODEL, atomic_write_json
 
 # ─── Search keywords ─────────────────────────────────────────────────────────
 # Группы по языку: найдём топ-шорты в каждой языковой нише
@@ -315,7 +314,7 @@ def _load_research() -> dict:
 
 
 def _save_research(data: dict):
-    RESEARCH_FILE.write_text(json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8")
+    atomic_write_json(RESEARCH_FILE, data)
 
 
 # ─── Formatting ──────────────────────────────────────────────────────────────

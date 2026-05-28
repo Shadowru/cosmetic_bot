@@ -1,8 +1,35 @@
+# --- Telegram bot ---
 python-telegram-bot[job-queue]==21.5
+
+# --- HTTP / web ---
 requests>=2.31
+flask>=3.0
+
+# --- Image / audio / video pipeline ---
 pillow>=10.0
 numpy>=1.24
-edge-tts>=7.0
+scipy>=1.11
+qrcode>=7.4
+num2words>=0.5.13
+
+# --- TTS (Silero) ---
+# silero models are loaded via torch.hub; CPU build is enough.
+torch>=2.1
+
+# --- Speech-to-text (yt_research) ---
+openai-whisper>=20231117
+yt-dlp>=2024.4.9
+
+# --- Google APIs (YouTube Data + Analytics) ---
 google-api-python-client>=2.100
 google-auth-httplib2>=0.2
 google-auth-oauthlib>=1.1
+
+# --- Spreadsheet export (keyword_research) ---
+openpyxl>=3.1
+
+# --- TikTok automation ---
+# Не на PyPI — установка: pip install git+https://github.com/wkaisertexas/tiktok-uploader
+# tiktok-uploader
+# Использует Playwright; после установки: python -m playwright install chromium
+playwright>=1.40

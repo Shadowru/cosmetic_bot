@@ -2,6 +2,8 @@ import json
 import os
 from flask import Flask, jsonify, request, render_template_string
 
+from config import atomic_write_json
+
 app = Flask(__name__)
 PRODUCTS_FILE = os.path.join(os.path.dirname(__file__), "products.json")
 
@@ -600,8 +602,7 @@ def get_products():
 @app.post("/admin/api/products")
 def save_products():
     data = request.get_json()
-    with open(PRODUCTS_FILE, "w", encoding="utf-8") as f:
-        json.dump(data, f, ensure_ascii=False, indent=2)
+    atomic_write_json(PRODUCTS_FILE, data)
     return jsonify({"ok": True})
 
 

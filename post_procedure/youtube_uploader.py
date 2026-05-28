@@ -157,6 +157,6 @@ def is_authorized() -> bool:
             creds.refresh(Request())
             TOKEN_FILE.write_text(creds.to_json())
             return True
-    except Exception:
-        pass
+    except Exception as e:
+        logger.warning("YouTube auth check failed (%s): %s", type(e).__name__, e)
     return False
