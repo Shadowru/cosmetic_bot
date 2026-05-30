@@ -433,6 +433,12 @@ def _call_ollama(system: str, user_msg: str) -> dict:
                 ],
                 "stream": False,
                 "keep_alive": "24h",
+                # think=false выключает chain-of-thought у qwen3+ моделей
+                # (без него thinking-модель уходит на 5-10 мин и иногда возвращает
+                # пустой content при упоре в budget). format=json форсит валидный
+                # JSON на уровне Ollama — двойная защита.
+                "think": False,
+                "format": "json",
                 "options": {"temperature": 0.75, "top_p": 0.9},
             },
             timeout=OLLAMA_TIMEOUT,

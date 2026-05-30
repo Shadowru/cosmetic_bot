@@ -378,6 +378,7 @@ def weekly_insights() -> str:
             "model": MODEL,
             "messages": [{"role": "user", "content": prompt}],
             "stream": False,
+            "think": False,
         }, timeout=OLLAMA_TIMEOUT)
         resp.raise_for_status()
         analysis = resp.json()["message"]["content"].strip()

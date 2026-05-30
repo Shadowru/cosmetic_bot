@@ -70,6 +70,7 @@ def _generate_one(procedure_id: str, procedure_name: str) -> str:
         ],
         "stream": False,
         "keep_alive": "24h",
+        "think": False,
         "options": {"temperature": 0.6, "top_p": 0.9},
     }, timeout=OLLAMA_TIMEOUT)
     resp.raise_for_status()

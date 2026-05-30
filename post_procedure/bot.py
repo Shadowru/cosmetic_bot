@@ -559,6 +559,7 @@ async def keep_ollama_warm(context: ContextTypes.DEFAULT_TYPE) -> None:
                 generator.OLLAMA_URL,
                 json={"model": generator.MODEL, "messages": [{"role": "user", "content": "1"}],
                       "stream": False, "keep_alive": "24h",
+                      "think": False,
                       "options": {"temperature": 0, "num_predict": 1}},
                 timeout=config.OLLAMA_WARMUP_TIMEOUT,
             )

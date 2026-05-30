@@ -133,6 +133,10 @@ def generate_post(procedure: str = None, post_type: str = None) -> dict:
             ],
             "stream": False,
             "keep_alive": "24h",
+            # think=false для qwen3+ — иначе модель уходит в chain-of-thought
+            # на 5-10 мин и иногда возвращает пустой content. Текст-промпт,
+            # поэтому format=json не нужен.
+            "think": False,
             "options": {"temperature": 0.8, "top_p": 0.9},
         },
         timeout=OLLAMA_TIMEOUT,
