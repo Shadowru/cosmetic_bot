@@ -422,6 +422,31 @@ async def handle_callback(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
         )
 
 
+async def on_error(update: object, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """Глобальный error-handler: пишет полный traceback в bot.log, шлёт
+    короткую сводку OWNER_ID в личку. Без этого исключения в handlers/jobs
+    были видны только в лог (warning «No error handlers are registered»),
+    бот молча игнорил команды (KeyError 'post_type' в /queue был как раз так)."""
+    err = context.error
+    logger.error("Bot error in handler", exc_info=err)
+    if not OWNER_ID:
+        return
+    # Из чего пришёл update — команда, callback, job?
+    source = "?"
+    if isinstance(update, Update):
+        if update.effective_message and update.effective_message.text:
+            source = update.effective_message.text[:50]
+        elif update.callback_query and update.callback_query.data:
+            source = f"callback:{update.callback_query.data[:30]}"
+    elif context.job is not None:
+        source = f"job:{context.job.name}"
+    msg = f"⚠️ Bot error\nsource: <code>{source}</code>\n<b>{type(err).__name__}</b>: {str(err)[:200]}"
+    try:
+        await context.bot.send_message(chat_id=OWNER_ID, text=msg, parse_mode="HTML")
+    except Exception as e:
+        logger.warning("on_error: failed to notify owner: %s", e)
+
+
 async def on_channel_post(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     if update.channel_post:
         state = load_state()
@@ -1065,6 +1090,7 @@ def main() -> None:
     app.add_handler(CommandHandler("insta",        cmd_insta))
     app.add_handler(CallbackQueryHandler(handle_callback))
     app.add_handler(MessageHandler(filters.ChatType.CHANNEL, on_channel_post))
+    app.add_error_handler(on_error)
 
     app.job_queue.run_repeating(scheduled_promo,   interval=POST_INTERVAL, first=60)
     app.job_queue.run_repeating(keep_ollama_warm,  interval=20 * 60,       first=30)
