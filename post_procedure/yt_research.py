@@ -188,7 +188,7 @@ def _analyze_structure(transcript: str, views: int) -> dict:
             "keep_alive": "24h",
             "options": {"temperature": 0.3, "top_p": 0.9},
         },
-        timeout=300,
+        timeout=900,
     )
     resp.raise_for_status()
     raw   = resp.json()["message"]["content"]
@@ -228,7 +228,7 @@ def _analyze_titles(videos: list, lang: str) -> dict:
             "keep_alive": "24h",
             "options":   {"temperature": 0.3},
         },
-        timeout=300,
+        timeout=900,
     )
     resp.raise_for_status()
     raw   = resp.json()["message"]["content"]

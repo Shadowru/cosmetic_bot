@@ -378,7 +378,7 @@ def weekly_insights() -> str:
             "model": MODEL,
             "messages": [{"role": "user", "content": prompt}],
             "stream": False,
-        }, timeout=120)
+        }, timeout=900)
         resp.raise_for_status()
         analysis = resp.json()["message"]["content"].strip()
     except Exception as e:
