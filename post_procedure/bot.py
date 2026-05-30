@@ -560,7 +560,7 @@ async def keep_ollama_warm(context: ContextTypes.DEFAULT_TYPE) -> None:
                 json={"model": generator.MODEL, "messages": [{"role": "user", "content": "1"}],
                       "stream": False, "keep_alive": "24h",
                       "options": {"temperature": 0, "num_predict": 1}},
-                timeout=600,
+                timeout=config.OLLAMA_WARMUP_TIMEOUT,
             )
         except Exception as e:
             logger.warning("Ollama warmup failed: %s", e)

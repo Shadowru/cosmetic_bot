@@ -20,7 +20,7 @@ logger = logging.getLogger(__name__)
 BASE_DIR    = Path(__file__).parent
 MAGNETS_FILE = BASE_DIR / "lead_magnets.json"
 
-from config import OLLAMA_URL, OLLAMA_MODEL as MODEL, atomic_write_json
+from config import OLLAMA_URL, OLLAMA_MODEL as MODEL, OLLAMA_TIMEOUT, atomic_write_json
 
 # 7 ключевых процедур + читаемые названия для подачи зрителю
 PROCEDURES = {
@@ -71,7 +71,7 @@ def _generate_one(procedure_id: str, procedure_name: str) -> str:
         "stream": False,
         "keep_alive": "24h",
         "options": {"temperature": 0.6, "top_p": 0.9},
-    }, timeout=900)
+    }, timeout=OLLAMA_TIMEOUT)
     resp.raise_for_status()
     text = resp.json()["message"]["content"].strip()
     # Strip wrapping code-block if Ollama wrapped

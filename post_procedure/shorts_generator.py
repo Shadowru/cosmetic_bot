@@ -28,6 +28,7 @@ MUSIC_DIR.mkdir(exist_ok=True)
 from config import (
     OLLAMA_URL,
     OLLAMA_MODEL as MODEL,
+    OLLAMA_TIMEOUT,
     MIN_FRESH_COMBOS,
     MIN_AVG_AVD_PCT,
     AVD_WINDOW,
@@ -434,7 +435,7 @@ def _call_ollama(system: str, user_msg: str) -> dict:
                 "keep_alive": "24h",
                 "options": {"temperature": 0.75, "top_p": 0.9},
             },
-            timeout=900,
+            timeout=OLLAMA_TIMEOUT,
         )
         resp.raise_for_status()
         raw = resp.json()["message"]["content"]

@@ -10,7 +10,7 @@ logger = logging.getLogger(__name__)
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 QUEUE_FILE = os.path.join(BASE_DIR, "content_queue.json")
-from config import OLLAMA_URL, OLLAMA_MODEL as MODEL, atomic_write_json
+from config import OLLAMA_URL, OLLAMA_MODEL as MODEL, OLLAMA_TIMEOUT, atomic_write_json
 
 PROCEDURES = ["laser", "biorevit", "piling", "rf", "dermaroller", "chistka",
               "meso", "botox", "fillers", "plazma", "photo", "smas", "general"]
@@ -135,7 +135,7 @@ def generate_post(procedure: str = None, post_type: str = None) -> dict:
             "keep_alive": "24h",
             "options": {"temperature": 0.8, "top_p": 0.9},
         },
-        timeout=900,
+        timeout=OLLAMA_TIMEOUT,
     )
     response.raise_for_status()
     text = response.json()["message"]["content"].strip()

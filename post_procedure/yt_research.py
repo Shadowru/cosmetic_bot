@@ -21,7 +21,7 @@ RESEARCH_FILE  = BASE_DIR / "research_cache.json"
 AUDIO_DIR      = BASE_DIR / "research_audio"
 AUDIO_DIR.mkdir(exist_ok=True)
 
-from config import OLLAMA_URL, OLLAMA_MODEL as MODEL, atomic_write_json
+from config import OLLAMA_URL, OLLAMA_MODEL as MODEL, OLLAMA_TIMEOUT, atomic_write_json
 
 # ─── Search keywords ─────────────────────────────────────────────────────────
 # Группы по языку: найдём топ-шорты в каждой языковой нише
@@ -188,7 +188,7 @@ def _analyze_structure(transcript: str, views: int) -> dict:
             "keep_alive": "24h",
             "options": {"temperature": 0.3, "top_p": 0.9},
         },
-        timeout=900,
+        timeout=OLLAMA_TIMEOUT,
     )
     resp.raise_for_status()
     raw   = resp.json()["message"]["content"]
@@ -228,7 +228,7 @@ def _analyze_titles(videos: list, lang: str) -> dict:
             "keep_alive": "24h",
             "options":   {"temperature": 0.3},
         },
-        timeout=900,
+        timeout=OLLAMA_TIMEOUT,
     )
     resp.raise_for_status()
     raw   = resp.json()["message"]["content"]

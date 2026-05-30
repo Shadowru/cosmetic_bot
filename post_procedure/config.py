@@ -17,6 +17,13 @@ from typing import Any
 # --- Ollama ---
 OLLAMA_URL = "http://localhost:11434/api/chat"
 OLLAMA_MODEL = os.environ.get("OLLAMA_MODEL", "qwen2.5:14b")
+# Контентные вызовы Ollama могут стоять в очереди — другие проекты на той же
+# машине шарят инстанс. На thinking-моделях (qwen3.6:35b) + конкуренция —
+# 900s было мало, 1800s даёт запас. Перебить можно через env.
+OLLAMA_TIMEOUT = int(os.environ.get("OLLAMA_TIMEOUT", "1800"))
+# Keep-alive ping должен быть быстрым (не блокировать другую работу при
+# проблемах). Если ping висит >10 мин — что-то уже сломалось.
+OLLAMA_WARMUP_TIMEOUT = int(os.environ.get("OLLAMA_WARMUP_TIMEOUT", "600"))
 
 # --- Smart-skip пороги (shorts_generator.should_skip_slot) ---
 MIN_FRESH_COMBOS = 5

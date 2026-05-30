@@ -18,7 +18,7 @@ BASE_DIR       = Path(__file__).parent
 ANALYTICS_FILE = BASE_DIR / "analytics.json"
 QUEUE_FILE     = BASE_DIR / "content_queue.json"
 
-from config import OLLAMA_URL, OLLAMA_MODEL as MODEL, atomic_write_json
+from config import OLLAMA_URL, OLLAMA_MODEL as MODEL, OLLAMA_TIMEOUT, atomic_write_json
 
 SCOPES = [
     "https://www.googleapis.com/auth/youtube.force-ssl",
@@ -378,7 +378,7 @@ def weekly_insights() -> str:
             "model": MODEL,
             "messages": [{"role": "user", "content": prompt}],
             "stream": False,
-        }, timeout=900)
+        }, timeout=OLLAMA_TIMEOUT)
         resp.raise_for_status()
         analysis = resp.json()["message"]["content"].strip()
     except Exception as e:
