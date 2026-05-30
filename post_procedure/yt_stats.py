@@ -179,6 +179,38 @@ def _get_retention_data(channel_id: str, days: int = 30) -> dict:
         return {}
 
 
+def _get_cta_retention(channel_id: str, video_id: str, days: int = 30,
+                       cta_ratio_start: float = 0.83) -> float | None:
+    """% зрителей доживших до CTA-карточки (последние ~5 сек 30-сек шорта).
+
+    audienceWatchRatio даёт долю аудитории по 100 бакетам elapsedVideoTimeRatio.
+    cta_ratio_start=0.83 ≈ последние 5 сек 30-секундного шорта. Возвращает
+    среднее по бакетам [cta_ratio_start, 1.0] или None если данных нет.
+    """
+    try:
+        yta = _yta()
+        end   = datetime.date.today()
+        start = end - datetime.timedelta(days=days)
+        resp  = yta.reports().query(
+            ids=f"channel=={channel_id}",
+            startDate=start.isoformat(),
+            endDate=end.isoformat(),
+            metrics="audienceWatchRatio",
+            dimensions="elapsedVideoTimeRatio",
+            filters=f"video=={video_id}",
+        ).execute()
+        rows = resp.get("rows", [])
+        if not rows:
+            return None
+        tail = [r[1] for r in rows if r[0] >= cta_ratio_start]
+        if not tail:
+            return None
+        return round(sum(tail) / len(tail) * 100, 1)
+    except Exception as e:
+        logger.warning("CTA retention API unavailable for %s: %s", video_id, e)
+        return None
+
+
 # ─── Aggregation ─────────────────────────────────────────────────────────────
 
 def _aggregate(videos: list, stats: dict, queue_idx: dict) -> tuple[dict, dict]:
@@ -298,17 +330,37 @@ def weekly_insights() -> str:
     week_views  = sum(v.get("views", 0) for v in recent.values())
     week_avg    = round(week_views / week_count) if week_count else 0
 
+    # CTA-retention: % дожимающих до последних 5 сек (где QR на TG). Помогает
+    # отличить «слабый CTA» (зрители доходят, но не идут в Telegram) от
+    # «слабый block3» (зрители уходят раньше CTA).
+    channel_id = data.get("channel", {}).get("id", "")
+    top5_recent = sorted(recent.items(), key=lambda x: x[1].get("views", 0), reverse=True)[:5]
+    cta_top5 = []
+    top_cta = None
+    if channel_id:
+        for vid_id, _v in top5_recent:
+            r = _get_cta_retention(channel_id, vid_id, days=14)
+            if r is not None:
+                cta_top5.append(r)
+                if vid_id == top_id:
+                    top_cta = r
+    cta_avg = round(sum(cta_top5) / len(cta_top5), 1) if cta_top5 else None
+    cta_line = (
+        f"\n- CTA-reach top-5: {cta_avg}% (доля доживающих до последних 5 сек, где QR на TG)"
+        if cta_avg is not None else ""
+    )
+
     prompt = f"""Ты аналитик YouTube-канала о косметологии. Дай 3-4 конкретные рекомендации по данным за неделю.
 
 ДАННЫЕ НЕДЕЛИ:
 - Опубликовано шортов: {week_count}
 - Суммарные просмотры: {week_views}
-- Средние просмотры на видео за неделю: {week_avg} (канальный avg: {avg_views})
+- Средние просмотры на видео за неделю: {week_avg} (канальный avg: {avg_views}){cta_line}
 
 ЛУЧШЕЕ ВИДЕО НЕДЕЛИ:
 - Название: «{top_title}»
 - Просмотры: {top_views} (в {round(top_views/avg_views, 1) if avg_views else '?'}x выше среднего)
-- Retention (AVD%): {top_pct}% (канальный avg: {avg_pct}%)
+- Retention (AVD%): {top_pct}% (канальный avg: {avg_pct}%){f' / CTA-reach: {top_cta}%' if top_cta is not None else ''}
 - Лайки: {top_likes}, комментарии: {top_comments}
 - Шаблон: {top_template}
 - Процедура: {top_proc}
@@ -340,6 +392,10 @@ def weekly_insights() -> str:
     if top_pct:
         vs = f" (канал avg: {avg_pct}%)" if avg_pct else ""
         lines.append(f"⏱ Retention: {top_pct}%{vs}")
+    if top_cta is not None:
+        lines.append(f"🎯 CTA-reach: {top_cta}% (доходит до QR на TG)")
+    if cta_avg is not None and len(cta_top5) > 1:
+        lines.append(f"🎯 CTA-reach top-5 avg: {cta_avg}%")
     lines += [
         f"🎬 Шаблон: <code>{top_template}</code> / процедура: <code>{top_proc}</code>",
         "",
