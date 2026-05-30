@@ -666,6 +666,40 @@ async def daily_generate(context: ContextTypes.DEFAULT_TYPE) -> None:
                 logger.warning("failed to notify owner about generation error: %s", notify_err)
 
 
+async def cmd_pending(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """Прислать превью с кнопками для pending items без review_message_id.
+
+    /pending          — все pending (до 5 за раз, чтобы не спамить)
+    /pending <id>     — конкретный по id
+    /pending all      — все, без лимита 5
+    """
+    if update.effective_user.id != OWNER_ID:
+        return
+    queue = generator.load_queue()
+    pending = [i for i in queue if i.get("status") == "pending"]
+
+    arg = context.args[0] if context.args else None
+    if arg and arg != "all":
+        pending = [i for i in pending if i["id"] == arg]
+        if not pending:
+            await update.message.reply_text(f"Нет pending с id={arg}")
+            return
+    elif arg != "all":
+        pending = pending[:5]
+
+    if not pending:
+        await update.message.reply_text("Pending без превью нет.")
+        return
+
+    await update.message.reply_text(f"Шлю превью для {len(pending)} pending...")
+    for item in pending:
+        try:
+            await send_review(context.bot, item)
+        except Exception as e:
+            logger.exception("cmd_pending: failed to send review for %s", item["id"])
+            await update.message.reply_text(f"⚠️ [{item['id']}]: {type(e).__name__}: {e}")
+
+
 async def cmd_queue(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     if update.effective_user.id != OWNER_ID:
         return
@@ -1077,6 +1111,7 @@ def main() -> None:
     app = Application.builder().token(token).build()
     app.add_handler(CommandHandler("start",     start))
     app.add_handler(CommandHandler("queue",     cmd_queue))
+    app.add_handler(CommandHandler("pending",   cmd_pending))
     app.add_handler(CommandHandler("generate",  cmd_generate))
     app.add_handler(CommandHandler("series",    cmd_series))
     app.add_handler(CommandHandler("plan",      cmd_plan))
