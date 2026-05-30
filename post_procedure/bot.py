@@ -652,7 +652,10 @@ async def cmd_queue(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     lines = [f"В очереди: {len(pending)}\n"]
     for item in pending[-10:]:
         proc = generator.PROCEDURE_NAMES.get(item["procedure"], item["procedure"])
-        lines.append(f"• [{item['id']}] {item['post_type']} / {proc}")
+        # У шортов есть `template`, у текстовых постов — `post_type`.
+        # Оба опциональны: фолбэк через `type` (short/post).
+        kind = item.get("template") or item.get("post_type") or item.get("type", "?")
+        lines.append(f"• [{item['id']}] {kind} / {proc}")
     await update.message.reply_text("\n".join(lines))
 
 
