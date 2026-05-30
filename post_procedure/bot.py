@@ -303,6 +303,7 @@ async def _handle_review(query, context: ContextTypes.DEFAULT_TYPE, data: str) -
                 await context.bot.send_message(chat_id=CHANNEL_ID, text=item["text"])
 
             item["status"] = "published"
+            item["published_at"] = datetime.datetime.utcnow().isoformat()
             generator.save_queue(queue)
             await query.edit_message_reply_markup(reply_markup=None)
             await query.answer("✅ Опубликован в канал")
@@ -593,6 +594,7 @@ async def _auto_publish_job(context: ContextTypes.DEFAULT_TYPE) -> None:
         for q in queue:
             if q["id"] == item["id"]:
                 q["status"] = "published"
+                q["published_at"] = datetime.datetime.utcnow().isoformat()
                 break
         generator.save_queue(queue)
         await context.bot.send_message(chat_id=OWNER_ID, text=f"🤖 Авто: «{title[:80]}»")
@@ -685,6 +687,7 @@ async def publish_scheduled(context: ContextTypes.DEFAULT_TYPE) -> None:
             else:
                 await context.bot.send_message(chat_id=CHANNEL_ID, text=item["text"])
             item["status"] = "published"
+            item["published_at"] = datetime.datetime.utcnow().isoformat()
             logger.info("Scheduled item published: %s", item["id"])
         except Exception as e:
             logger.error("Failed to publish scheduled %s: %s", item["id"], e)
