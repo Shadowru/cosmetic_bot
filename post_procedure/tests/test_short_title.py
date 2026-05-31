@@ -22,3 +22,27 @@ def test_botox_genitive():
 def test_general_template():
     title = _short_title({"procedure": "general", "template": "money"})
     assert title.startswith("Деньги")
+
+
+# --- first_time: критический шаблон где раньше «делаешь {proc} впервые»
+# падал в родительный из PROC_NAMES («делаешь лазерной шлифовки впервые»).
+# Защита от регрессии: проверяем процедуры разного рода и аббревиатур.
+
+def test_first_time_laser_no_genitive_collision():
+    title = _short_title({"procedure": "laser", "template": "first_time"})
+    # Сейчас правильно: «...впервые после лазерной шлифовки...»
+    # Регрессия (старая форма): «делаешь лазерной шлифовки впервые»
+    assert "делаешь лазерной" not in title.lower()
+    assert "после лазерной шлифовки" in title.lower()
+
+
+def test_first_time_smas_keeps_uppercase():
+    title = _short_title({"procedure": "smas", "template": "first_time"})
+    assert "SMAS-лифтинга" in title  # аббревиатура не должна сломаться
+    assert "делаешь smas" not in title.lower()
+
+
+def test_first_time_botox_masculine():
+    title = _short_title({"procedure": "botox", "template": "first_time"})
+    assert "после ботокса" in title.lower()
+    assert "делаешь ботокса" not in title.lower()

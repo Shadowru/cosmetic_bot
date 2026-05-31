@@ -179,13 +179,12 @@ def _get_retention_data(channel_id: str, days: int = 30) -> dict:
         return {}
 
 
-def _get_cta_retention(channel_id: str, video_id: str, days: int = 30,
-                       cta_ratio_start: float = 0.83) -> float | None:
-    """% зрителей доживших до CTA-карточки (последние ~5 сек 30-сек шорта).
+def _get_retention_bucket(channel_id: str, video_id: str, ratio_start: float,
+                          ratio_end: float = 1.0, days: int = 30) -> float | None:
+    """Avg audienceWatchRatio в окне [ratio_start, ratio_end] elapsedVideoTimeRatio.
 
-    audienceWatchRatio даёт долю аудитории по 100 бакетам elapsedVideoTimeRatio.
-    cta_ratio_start=0.83 ≈ последние 5 сек 30-секундного шорта. Возвращает
-    среднее по бакетам [cta_ratio_start, 1.0] или None если данных нет.
+    Используется для двух метрик: CTA-reach (последние 5 сек ~ 0.83-1.0) и
+    swipe-survival (первые 3 сек ~ 0.0-0.1). Возвращает % или None.
     """
     try:
         yta = _yta()
@@ -202,47 +201,70 @@ def _get_cta_retention(channel_id: str, video_id: str, days: int = 30,
         rows = resp.get("rows", [])
         if not rows:
             return None
-        tail = [r[1] for r in rows if r[0] >= cta_ratio_start]
-        if not tail:
+        bucket = [r[1] for r in rows if ratio_start <= r[0] <= ratio_end]
+        if not bucket:
             return None
-        return round(sum(tail) / len(tail) * 100, 1)
+        return round(sum(bucket) / len(bucket) * 100, 1)
     except Exception as e:
-        logger.warning("CTA retention API unavailable for %s: %s", video_id, e)
+        logger.warning("retention bucket API unavailable for %s: %s", video_id, e)
         return None
+
+
+def _get_cta_retention(channel_id: str, video_id: str, days: int = 30) -> float | None:
+    """% зрителей доживших до CTA-карточки (~последние 5 сек 30-сек шорта)."""
+    return _get_retention_bucket(channel_id, video_id, 0.83, 1.0, days)
+
+
+def _get_swipe_survival(channel_id: str, video_id: str, days: int = 30) -> float | None:
+    """% зрителей оставшихся после первых ~3 сек (защита KICKER от swipe-away)."""
+    return _get_retention_bucket(channel_id, video_id, 0.0, 0.1, days)
 
 
 # ─── Aggregation ─────────────────────────────────────────────────────────────
 
 def _aggregate(videos: list, stats: dict, queue_idx: dict) -> tuple[dict, dict]:
-    tmpl: dict[str, list] = {}
-    proc: dict[str, list] = {}
-
+    # Сначала собираем raw observations с привязкой к (template, procedure),
+    # чтобы потом нормализовать template-метрику по средней процедуры.
+    # Иначе days_7/botox (botox — топовая процедура) выглядит «победителем шаблона»,
+    # хотя это эффект процедуры. lift = views / proc_avg показывает реальный вклад шаблона.
+    obs: list[tuple[str, str, int]] = []  # (template, procedure, views)
     for v in videos:
         vid_id = v["id"]
         if vid_id not in stats or not stats[vid_id]["is_short"]:
             continue
-        views = stats[vid_id]["views"]
-        item  = queue_idx.get(vid_id)
-        if item:
-            t = item.get("template")
-            p = item.get("procedure")
-            if t:
-                tmpl.setdefault(t, []).append(views)
-            if p:
-                proc.setdefault(p, []).append(views)
+        item = queue_idx.get(vid_id)
+        if not item:
+            continue
+        t = item.get("template")
+        p = item.get("procedure")
+        if t and p:
+            obs.append((t, p, stats[vid_id]["views"]))
 
-    def summarise(d):
+    proc: dict[str, list[int]] = {}
+    for _, p, views in obs:
+        proc.setdefault(p, []).append(views)
+    proc_avg = {p: sum(vs) / len(vs) for p, vs in proc.items() if vs}
+
+    tmpl_views: dict[str, list[int]]   = {}
+    tmpl_lifts: dict[str, list[float]] = {}
+    for t, p, views in obs:
+        tmpl_views.setdefault(t, []).append(views)
+        if proc_avg.get(p, 0):
+            tmpl_lifts.setdefault(t, []).append(views / proc_avg[p])
+
+    def summarise_simple(d):
         return {
-            k: {
-                "count": len(v),
-                "avg":   round(sum(v) / len(v)),
-                "max":   max(v),
-                "total": sum(v),
-            }
+            k: {"count": len(v), "avg": round(sum(v) / len(v)),
+                "max": max(v), "total": sum(v)}
             for k, v in d.items() if v
         }
 
-    return summarise(tmpl), summarise(proc)
+    tmpl_summary = summarise_simple(tmpl_views)
+    for t, lifts in tmpl_lifts.items():
+        if t in tmpl_summary and lifts:
+            tmpl_summary[t]["avg_lift"] = round(sum(lifts) / len(lifts), 2)
+
+    return tmpl_summary, summarise_simple(proc)
 
 
 # ─── Main refresh ────────────────────────────────────────────────────────────
@@ -330,25 +352,43 @@ def weekly_insights() -> str:
     week_views  = sum(v.get("views", 0) for v in recent.values())
     week_avg    = round(week_views / week_count) if week_count else 0
 
-    # CTA-retention: % дожимающих до последних 5 сек (где QR на TG). Помогает
-    # отличить «слабый CTA» (зрители доходят, но не идут в Telegram) от
-    # «слабый block3» (зрители уходят раньше CTA).
+    # Engagement-метрики: считаем для топ-5 видео недели.
+    # - CTA-reach: % дошедших до последних 5 сек (QR на TG).
+    # - Swipe-survival: % переживших первые 3 сек (защита KICKER от swipe-away).
+    # - Like-rate: likes/views. Главный быстрый позитивный сигнал для shorts-алгоритма;
+    #   норма 1-3%, у нас в проде болтается ~0.1% — отсюда виралы не повторяются.
     channel_id = data.get("channel", {}).get("id", "")
     top5_recent = sorted(recent.items(), key=lambda x: x[1].get("views", 0), reverse=True)[:5]
-    cta_top5 = []
-    top_cta = None
-    if channel_id:
-        for vid_id, _v in top5_recent:
-            r = _get_cta_retention(channel_id, vid_id, days=14)
-            if r is not None:
-                cta_top5.append(r)
-                if vid_id == top_id:
-                    top_cta = r
-    cta_avg = round(sum(cta_top5) / len(cta_top5), 1) if cta_top5 else None
-    cta_line = (
-        f"\n- CTA-reach top-5: {cta_avg}% (доля доживающих до последних 5 сек, где QR на TG)"
-        if cta_avg is not None else ""
-    )
+    cta_top5, swipe_top5, like_rates = [], [], []
+    top_cta = top_swipe = None
+    for vid_id, v in top5_recent:
+        views_v = v.get("views", 0)
+        likes_v = v.get("likes", 0)
+        if views_v >= 50:
+            like_rates.append(likes_v / views_v * 100)
+        if not channel_id:
+            continue
+        r_cta = _get_cta_retention(channel_id, vid_id, days=14)
+        if r_cta is not None:
+            cta_top5.append(r_cta)
+            if vid_id == top_id:
+                top_cta = r_cta
+        r_swipe = _get_swipe_survival(channel_id, vid_id, days=14)
+        if r_swipe is not None:
+            swipe_top5.append(r_swipe)
+            if vid_id == top_id:
+                top_swipe = r_swipe
+    cta_avg   = round(sum(cta_top5) / len(cta_top5), 1)       if cta_top5   else None
+    swipe_avg = round(sum(swipe_top5) / len(swipe_top5), 1)   if swipe_top5 else None
+    like_avg  = round(sum(like_rates) / len(like_rates), 2)   if like_rates else None
+    extra_lines = []
+    if cta_avg is not None:
+        extra_lines.append(f"- CTA-reach top-5: {cta_avg}% (доля доживающих до последних 5 сек, где QR на TG)")
+    if swipe_avg is not None:
+        extra_lines.append(f"- Swipe-survival top-5: {swipe_avg}% (доля переживших первые 3 сек — KICKER)")
+    if like_avg is not None:
+        extra_lines.append(f"- Like-rate top-5: {like_avg}% (норма shorts 1-3%, главный быстрый сигнал алгоритма)")
+    cta_line = "\n" + "\n".join(extra_lines) if extra_lines else ""
 
     prompt = f"""Ты аналитик YouTube-канала о косметологии. Дай 3-4 конкретные рекомендации по данным за неделю.
 
@@ -393,10 +433,20 @@ def weekly_insights() -> str:
     if top_pct:
         vs = f" (канал avg: {avg_pct}%)" if avg_pct else ""
         lines.append(f"⏱ Retention: {top_pct}%{vs}")
+    if top_swipe is not None:
+        lines.append(f"👀 Swipe-survival (3s): {top_swipe}%")
     if top_cta is not None:
         lines.append(f"🎯 CTA-reach: {top_cta}% (доходит до QR на TG)")
+    top_views_safe = top.get("views", 0)
+    top_likes_safe = top.get("likes", 0)
+    if top_views_safe >= 50:
+        lr = round(top_likes_safe / top_views_safe * 100, 2)
+        marker = " ⚠️" if lr < 0.5 else (" ✅" if lr >= 1 else "")
+        lines.append(f"👍 Like-rate: {lr}% (норма 1-3%){marker}")
     if cta_avg is not None and len(cta_top5) > 1:
         lines.append(f"🎯 CTA-reach top-5 avg: {cta_avg}%")
+    if like_avg is not None and len(like_rates) > 1:
+        lines.append(f"👍 Like-rate top-5 avg: {like_avg}%")
     lines += [
         f"🎬 Шаблон: <code>{top_template}</code> / процедура: <code>{top_proc}</code>",
         "",
@@ -435,11 +485,23 @@ def format_stats() -> str:
     lines.append("")
 
     if tmpl:
-        sorted_tmpl = sorted(tmpl.items(), key=lambda x: x[1]["avg"], reverse=True)
-        lines.append("🎬 <b>Шаблоны</b> (avg просмотров):")
+        # Сортируем по avg_lift (нормализация по процедуре) — это «честный» вклад
+        # шаблона, очищенный от того что некоторые процедуры массовее.
+        # Если avg_lift нет (старые данные) — фолбэк на avg views.
+        sorted_tmpl = sorted(tmpl.items(),
+                             key=lambda x: x[1].get("avg_lift", 0) or x[1]["avg"] / 1000,
+                             reverse=True)
+        lines.append("🎬 <b>Шаблоны</b> (avg lift × процедура → avg views):")
+        max_lift = max((s.get("avg_lift", 0) for _, s in sorted_tmpl), default=0)
         for t, s in sorted_tmpl[:6]:
-            bar = "▓" * min(10, round(s["avg"] / max(x[1]["avg"] for x in sorted_tmpl) * 10))
-            lines.append(f"  {bar} <code>{t}</code> — {s['avg']:,} ({s['count']} видео)")
+            lift = s.get("avg_lift")
+            if lift is not None and max_lift:
+                bar = "▓" * min(10, max(1, round(lift / max_lift * 10)))
+                lift_str = f"×{lift}"
+            else:
+                bar = "▓" * 3
+                lift_str = "?"
+            lines.append(f"  {bar} <code>{t}</code> — {lift_str} / {s['avg']:,} avg ({s['count']} видео)")
         lines.append("")
 
     if proc:
